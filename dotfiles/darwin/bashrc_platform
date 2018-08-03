@@ -1,0 +1,24 @@
+# vim: ft=sh
+
+# aliases
+alias ls='ls -FG'
+
+if [[ -e '/Applications/MacVim.app/Contents/MacOS/Vim' ]]; then
+    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim'
+fi
+
+# configs
+export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
+
+# homebrew github token, to avoid rate limits on github API access
+export HOMEBREW_GITHUB_API_TOKEN=2164d246839d39828b55797685206d89878bf083
+
+# bash completion support
+if [[ -f $(brew --prefix)/etc/bash_completion ]]; then
+    . $(brew --prefix)/etc/bash_completion
+else
+    echo "no 'bash_completion' support found!"
+fi
+
+# git completion
+source /usr/local/etc/bash_completion.d/git-completion.bash

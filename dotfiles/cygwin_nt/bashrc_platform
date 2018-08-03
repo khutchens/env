@@ -1,0 +1,13 @@
+# vim: ft=sh
+
+# aliases
+alias sg1='python.exe SG1.py'
+alias pushtxd='sg1 pushromgui 0 TXD AstroTXD*.bin'
+alias pusha50='sg1 pushromgui 0 A50 AstroA50*.bin'
+alias pushma3='sg1 pushromgui 0 MA3 AstroMA3*.bin'
+
+alias ls='ls -F --color=tty'
+alias unrar='unrar.exe x'
+
+# configs
+export LS_COLORS="no=00:ln=33:di=35:ex=32:or=41:mi=41"

@@ -1,0 +1,92 @@
+# This file is sourced for all bash instances, so put most configs here.
+# vim: ft=sh
+
+# If not running interactively, don't do anything. this fixes things like scp.
+[[ -z "$PS1" ]] && return
+
+# bash prompt
+export PROMPT_DIRTRIM=2 # this will only work in bash 4.x, but OSX comes with bash 3.x by default.
+if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+    HOST="\[\e[31m\]\u\e[33m@\e[31m\h "
+else
+    HOST=''
+fi
+export PS1="$HOST\[\e[34m\]\w\[\e[31m\] \$\[\e[0m\] "
+
+# basic ENV variables
+export EDITOR=vim
+
+# project paths
+export TAHOE_ARMGCC_DIR="/Users/kylehu/gcc/gcc-arm-none-eabi-6-2017-q2-update"
+
+# tell grep to colorize matches if they are printing to a terminal.
+export GREP_OPTIONS='--color=auto'
+export GREP_COLOR='31'
+
+# add my personal bin dir to PATH
+export PATH=~/bin:$PATH
+
+# use python in unbuffered mode, because the windows version doesn't recognize rxvt as an interactive term
+export PYTHONUNBUFFERED=1
+
+# FZF stuff:
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+export FZF_DEFAULT_OPTS='-m'
+
+fe() {
+    # fe - Open the selected files with the default editor
+    local files=$(fzf --query="$1" --select-1 --exit-0 | sed -e "s/\(.*\)/\'\1\'/")
+    local command="${EDITOR:-vim} -p $files"
+    [[ -n "$files" ]] && eval $command
+}
+
+fd() {
+    # fd - cd to selected directory
+    local dir
+    dir=$(find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) &&
+    cd "$dir"
+}
+
+fh() {
+    # fh - repeat history
+    eval $( ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
+}
+
+fkill() {
+    # fkill - kill process
+    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    if [ "x$pid" != "x" ]
+    then
+        kill -${1:-9} $pid
+    fi
+}
+
+# aliases
+alias ll='ls -lh'
+alias la='ll -as'
+alias pu='pushd'
+alias po='popd'
+alias c='clear'
+alias h='history 50'
+alias hg='history | grep'
+alias less='less -F'
+
+alias psg='ps -ef | grep \!*'
+alias dfm='df -h | grep hutchens'
+alias purge='rm *~'
+alias f="find ./ -name '\!*'"
+alias ag="ag --color-path=35 --color-match=36 --color-line-number=33"
+
+alias vim-env='vim -p ~/.bashrc ~/.aliases ~/$ALIAS; source ~/.bashrc'
+
+alias svdiff='svn diff | vim -'
+
+BASHRC_OS=".bashrc_platform"
+if [[ -n $BASHRC_OS ]]; then
+    if [[ -f ~/$BASHRC_OS ]]; then
+        source ~/$BASHRC_OS
+    else
+        echo "File '$BASHRC_OS' not found."
+    fi
+fi
+

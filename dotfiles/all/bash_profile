@@ -1,0 +1,8 @@
+# This file is sourced for login shells only. Don't put configs here that should apply to all shells.
+# vim: ft=sh
+
+# load env configs for all shells.
+if [ -e ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+

@@ -1,0 +1,32 @@
+# vim: syntax=gdb
+
+# don't confirm exit
+set confirm off
+
+# don't pause output when larger than screen
+set height 0
+set width 0
+
+# default base is 16
+set input-radix 0x10
+set output-radix 0x10
+
+# prompt color
+set prompt \033[31mgdb \033[34m$ \033[0m
+
+# display settings
+set print array on
+set print elements 0
+set print pretty on
+set filename-display basename
+
+# general behavior
+set disassemble-next-line on
+set backtrace past-main on
+set backtrace past-entry on
+
+# save history to file so it persists between sessions
+set history save on
+
+source ~/.gdb/cortex_m.gdb
+source ~/.gdb/free_rtos.gdb

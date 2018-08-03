@@ -1,0 +1,7 @@
+# vim: ft=sh
+
+# aliases
+alias ls='ls -F --color=tty'
+
+# configs
+export LS_COLORS="no=00:ln=33:di=35:ex=32:or=41:mi=41"
