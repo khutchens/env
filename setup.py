@@ -39,17 +39,17 @@ if __name__ == '__main__':
 
     # link dotfiles
     print "Linking dot files:"
-    dotfiles = glob.glob('dotfiles/all/*')
+    dotfiles = glob.glob(env_path + '/dotfiles/all/*')
 
     if uname == 'Darwin':
-        dotfiles += glob.glob('dotfiles/darwin/*')
+        dotfiles += glob.glob(env_path + '/dotfiles/darwin/*')
     elif uname == 'Linux':
-        dotfiles += glob.glob('dotfiles/linux/*')
+        dotfiles += glob.glob(env_path + '/dotfiles/linux/*')
     elif uname == 'CYGWIN_NT':
-        dotfiles += glob.glob('dotfiles/cygwin_nt/*')
+        dotfiles += glob.glob(env_path + '/dotfiles/cygwin_nt/*')
 
     for file in dotfiles:
-        file_path = env_path + '/' + file
+        file_path = file
         link_path = home_path + '/.' + os.path.basename(file)
         action = ''
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # link bins
     print "\nLinking bin files:"
-    binfiles = glob.glob('bin/*')
+    binfiles = glob.glob(env_path + '/bin/*')
 
     try:
         os.mkdir(home_path + '/bin')
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             raise e
 
     for file in binfiles:
-        file_path = env_path + '/' + file
+        file_path = file
         link_path = home_path + '/bin/' + os.path.basename(file).split('.')[0]
         action = ''
 
