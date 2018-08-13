@@ -46,11 +46,6 @@ set splitbelow
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
 
-" quickfix stuff
-command -nargs=+ G tabnew | execute 'silent lgrep <args>' | lopen 25
-nnoremap m :lw<CR>:lne<CR>
-nnoremap M :lw<CR>:lp<CR>
-
 " python highlighting options
 let python_highlight_builtins           = 1
 let python_highlight_builtin_objs       = 1
