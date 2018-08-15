@@ -140,12 +140,15 @@ function FzfTagSearch(file, kind, external)
         return -1
     endif
     
+    " shorten name for readability
+    let l:fname = fnamemodify(l:tag.filename, ':.')
+
     " find tag's buffer, creating a new one if necessary
-    let l:buf = bufnr(l:tag.filename)
+    let l:buf = bufnr(l:fname)
     if l:buf < 0
-        execute('edit ' . l:tag.filename)
+        execute('edit ' . l:fname)
     else
-        execute('buffer ' . l:tag.filename)
+        execute('buffer ' . l:fname)
     endif
 
     " go to tag
