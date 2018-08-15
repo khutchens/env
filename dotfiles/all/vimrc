@@ -61,10 +61,13 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor\ --ignore\ build
 endif
 
-" use fzf in vim
-nnoremap <silent> <leader>fe :call fzf#run({'sink': 'tabe'})<CR>
-nnoremap <silent> <leader>ff :call fzf#run({'source': "sed '/^\\!/d;s/	.*//' tags", 'sink': 'tag'})<CR>
+" fzf
+nnoremap <silent> <leader>fe :call fzf#run({'sink': 'edit'})<CR>
 nnoremap <silent> <leader>ft :call FzfTagsfile()<CR>
+nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%:p'), 'f')<CR>
+nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f')<CR>
+nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '')<CR>
+nnoremap <silent> <leader>fV :call FzfTagSearch('', '')<CR>
 
 function FzfTagsfile()
     let l:tags = ''
@@ -74,6 +77,39 @@ function FzfTagsfile()
     endfor
     execute('set tags=' . l:tags)
     execute('set tags')
+endfunction
+
+function FzfTagSearch(file, kind)
+    let l:tags = taglist(".")
+
+    " filter tags to only include desired file and kind
+    let l:tags_filtered = {}
+    for l:tag in l:tags
+        let l:file_match = (a:file == '' || l:tag.filename == a:file)
+        let l:kind_match = (a:kind == '' || l:tag.kind == a:kind)
+        if l:file_match && l:kind_match
+            let l:tags_filtered[l:tag.name] = l:tag
+        endif
+    endfor
+
+    " select a tag
+    silent! let l:tag = fzf#run({'source': sort(keys(l:tags_filtered)), 'options': '--no-multi'})
+    if len(l:tag) != 1
+        return
+    endif
+    let l:tag = l:tags_filtered[l:tag[0]]
+    
+    " find tag's buffer, creating a new one if necessary
+    let l:buf = bufnr(l:tag.filename)
+    if l:buf < 0
+        execute('edit '.l:tag.filename)
+    else
+        execute('buffer '. l:tag.filename)
+    endif
+
+    " go to tag
+    let l:cmd = substitute(l:tag.cmd, '\([*\[\]]\)', '\\\1', 'g')
+    execute(l:cmd)
 endfunction
 
 " easy open/close related header
