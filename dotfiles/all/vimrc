@@ -82,25 +82,52 @@ function FzfTagsfile()
     execute('set tags')
 endfunction
 
-function FzfTag(file, kind)
-    let l:tags = taglist(".")
+function FzfTagOld(file, kind)
+    let l:tags = taglist('.')
 
-    " filter tags to only include desired file and kind
-    let l:tags_filtered = {}
-    for l:tag in l:tags
-        let l:file_match = (a:file == '' || l:tag.filename == a:file)
-        let l:kind_match = (a:kind == '' || l:tag.kind == a:kind)
-        if l:file_match && l:kind_match
-            let l:tags_filtered[l:tag.name] = l:tag
-        endif
-    endfor
+    " filter out unwanted files and types
+    if a:kind != '' | call filter(l:tags, 'v:val.kind == a:kind') | endif
+    if a:file != '' | call filter(l:tags, 'v:val.filename == a:file') | endif
+
+    " fzf just wants names
+    call map(l:tags, 'v:val.name')
 
     " select a tag
-    silent! let l:tag = fzf#run({'source': sort(keys(l:tags_filtered)), 'options': '--no-multi'})
+    silent! let l:tag = fzf#run({'source': l:tags, 'options': '--no-multi'})
     if len(l:tag) != 1
         return -1
     endif
-    return l:tags_filtered[l:tag[0]]
+
+    return taglist(l:tag[0])[0]
+endfunction
+
+function FzfTag(file, kind)
+    " This is an alternate tag selector that builds a taglist directly from the
+    " tag files rather than using vim's builtin taglist(). This isn't actually
+    " significantly faster, but it allows fzf to start displaying tags as they
+    " come in over the pipe rather than waiting until the full tag list is built,
+    " which feels nicer.
+
+    let l:tagfiles = tagfiles()
+    if len(l:tagfiles) == 0
+        echo "No tag file selected!"
+        return -1
+    endif
+
+    let l:source_command = []
+
+    call add(l:source_command, 'grep -v ! ' . join(l:tagfiles, ' '))
+    if a:kind != '' | call add(l:source_command, 'awk -F \t ''{if ($4 == "' . a:kind . '") { print } }''') | endif
+    if a:file != '' | call add(l:source_command, 'awk -F \t ''{if ($2 == "' . a:file . '") { print } }''') | endif
+    call add(l:source_command, 'awk -F \t ''{print $1}''')
+
+    let l:source_command_string = join(l:source_command, ' | ')
+    silent! let l:tag = fzf#run({'source': l:source_command_string, 'options': '--no-multi'})
+    if len(l:tag) != 1
+        return -1
+    endif
+
+    return taglist(l:tag[0])[0]
 endfunction
 
 function FzfTagSearch(file, kind)
