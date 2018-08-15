@@ -64,10 +64,10 @@ endif
 " fzf
 nnoremap <silent> <leader>fe :call fzf#run({'sink': 'edit'})<CR>
 nnoremap <silent> <leader>ft :call FzfTagsfile()<CR>
-nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%:p'), 'f')<CR>
-nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f')<CR>
-nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '')<CR>
-nnoremap <silent> <leader>fV :call FzfTagSearch('', '')<CR>
+nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%:p'), 'f', 1)<CR>
+nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f', 1)<CR>
+nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '', 1)<CR>
+nnoremap <silent> <leader>fV :call FzfTagSearch('', '', 1)<CR>
 nnoremap <silent> <leader>fy :call FzfTagInsert('', '')<CR>
 nnoremap <silent> <leader>fb :call FzfBuffers()<CR>
 nnoremap <silent> <leader>fh :call FzfHelp()<CR>
@@ -82,7 +82,7 @@ function FzfTagsfile()
     execute('set tags')
 endfunction
 
-function FzfTagOld(file, kind)
+function FzfTagInternal(file, kind)
     let l:tags = taglist('.')
 
     " filter out unwanted files and types
@@ -101,7 +101,7 @@ function FzfTagOld(file, kind)
     return taglist(l:tag[0])[0]
 endfunction
 
-function FzfTag(file, kind)
+function FzfTagExternal(file, kind)
     " This is an alternate tag selector that builds a taglist directly from the
     " tag files rather than using vim's builtin taglist(). This isn't actually
     " significantly faster, but it allows fzf to start displaying tags as they
@@ -130,8 +130,12 @@ function FzfTag(file, kind)
     return taglist(l:tag[0])[0]
 endfunction
 
-function FzfTagSearch(file, kind)
-    let l:tag = FzfTag(a:file, a:kind)
+function FzfTagSearch(file, kind, external)
+    if a:external
+        let l:tag = FzfTagExternal(a:file, a:kind)
+    else
+        let l:tag = FzfTagInternal(a:file, a:kind)
+    endif
     if type(l:tag) != v:t_dict
         return -1
     endif
@@ -150,7 +154,7 @@ function FzfTagSearch(file, kind)
 endfunction
 
 function FzfTagInsert(file, kind)
-    let l:tag = FzfTag(a:file, a:kind)
+    let l:tag = FzfTagExternal(a:file, a:kind)
     if type(l:tag) != v:t_dict
         return -1
     endif
@@ -180,7 +184,7 @@ function FzfHelp()
     else
         execute('help')
     endif
-    call FzfTagSearch('', '')
+    call FzfTagSearch('', '', 0)
 endfunction
 
 " easy open/close related header
