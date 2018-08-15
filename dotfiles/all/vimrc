@@ -68,6 +68,9 @@ nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%:p'), 'f')<CR>
 nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f')<CR>
 nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '')<CR>
 nnoremap <silent> <leader>fV :call FzfTagSearch('', '')<CR>
+nnoremap <silent> <leader>fy :call FzfTagInsert('', '')<CR>
+nnoremap <silent> <leader>fb :call FzfBuffers()<CR>
+nnoremap <silent> <leader>fh :call FzfHelp()<CR>
 
 function FzfTagsfile()
     let l:tags = ''
@@ -79,7 +82,7 @@ function FzfTagsfile()
     execute('set tags')
 endfunction
 
-function FzfTagSearch(file, kind)
+function FzfTag(file, kind)
     let l:tags = taglist(".")
 
     " filter tags to only include desired file and kind
@@ -95,21 +98,62 @@ function FzfTagSearch(file, kind)
     " select a tag
     silent! let l:tag = fzf#run({'source': sort(keys(l:tags_filtered)), 'options': '--no-multi'})
     if len(l:tag) != 1
-        return
+        return -1
     endif
-    let l:tag = l:tags_filtered[l:tag[0]]
+    return l:tags_filtered[l:tag[0]]
+endfunction
+
+function FzfTagSearch(file, kind)
+    let l:tag = FzfTag(a:file, a:kind)
+    if type(l:tag) != v:t_dict
+        return -1
+    endif
     
     " find tag's buffer, creating a new one if necessary
     let l:buf = bufnr(l:tag.filename)
     if l:buf < 0
-        execute('edit '.l:tag.filename)
+        execute('edit ' . l:tag.filename)
     else
-        execute('buffer '. l:tag.filename)
+        execute('buffer ' . l:tag.filename)
     endif
 
     " go to tag
     let l:cmd = substitute(l:tag.cmd, '\([*\[\]]\)', '\\\1', 'g')
     execute(l:cmd)
+endfunction
+
+function FzfTagInsert(file, kind)
+    let l:tag = FzfTag(a:file, a:kind)
+    if type(l:tag) != v:t_dict
+        return -1
+    endif
+
+    let @" = l:tag.name
+endfunction
+
+function FzfBuffers()
+    let l:bufs = range(1, bufnr('$'))
+    call map(l:bufs, 'bufname(v:val)')
+
+    silent! let l:buf = fzf#run({'source': l:bufs, 'options': '--no-multi'})
+    if len(l:buf) != 1
+        return
+    endif
+    let l:buf = l:buf[0]
+
+    execute('buffer ' . l:buf)
+endfunction
+
+function FzfHelp()
+    let l:bufs = getbufinfo()
+    call filter(l:bufs, '(len(v:val.windows) > 0) && has_key(v:val.variables, "current_syntax") && (v:val.variables.current_syntax == "help")')
+    if len(l:bufs) > 0
+        let l:win = l:bufs[0].windows[0]
+        call win_gotoid(l:win)
+    else
+        execute('help')
+    endif
+    call FzfTagSearch('', '')
 endfunction
 
 " easy open/close related header
