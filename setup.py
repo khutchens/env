@@ -22,8 +22,10 @@ def symlink(target, link):
                 os.remove(link)
                 os.symlink(target, link)
                 return colors.GREEN + 'new link created' + colors.END
+            elif target == os.readlink(link):
+                return colors.YELLOW + 'link exists' + colors.END
             else:
-                return colors.YELLOW + 'link already exists' + colors.END
+                return colors.RED + 'link exists and differs' + colors.END
         else:
             raise e
 
