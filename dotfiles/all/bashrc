@@ -13,19 +13,19 @@ else
 fi
 export PS1="$HOST\[\e[34m\]\w\[\e[31m\] \$\[\e[0m\] "
 
-# basic ENV variables
-export EDITOR=vim
+# aliases
+alias ll='ls -lh'
+alias la='ll -as'
+alias hg='history | grep'
 
-# tell grep to colorize matches if they are printing to a terminal.
+# ENV
+export EDITOR=vim
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='31'
-
-# add my personal bin dir to PATH
 export PATH=~/bin:$PATH
-
-# FZF stuff
 export FZF_DEFAULT_OPTS='-m'
 
+# fzf
 fe() {
     # fe - Open the selected files with the default editor
     local files=$(fzf --query="$1" --select-1 --exit-0 | sed -e "s/\(.*\)/\'\1\'/")
@@ -53,11 +53,6 @@ fkill() {
         kill -${1:-9} $pid
     fi
 }
-
-# aliases
-alias ll='ls -lh'
-alias la='ll -as'
-alias hg='history | grep'
 
 # extended bashrc's
 BASHRC_OS=".bashrc_platform"
