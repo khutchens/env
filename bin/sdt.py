@@ -190,7 +190,6 @@ if __name__ == '__main__':
     with open(log_fname, 'a') as log_file:
         try:
             # launch threads to handle each tty
-            print config
             for path in paths:
                 n = len(tty_threads)
                 color = config['colors'][n % len(config['colors'])]
