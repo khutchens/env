@@ -13,21 +13,24 @@ class colors:
     END     = '\033[0m'
 
 def symlink(target, link):
+    arrow = colors.PINK + '->' + colors.END
+    print link, arrow, target,
     try:
         os.symlink(target, link)
-        return colors.GREEN + 'new link created' + colors.END
+        print colors.GREEN, 'new link created',
     except OSError as e:
         if e.errno == errno.EEXIST:
             if args.force:
                 os.remove(link)
                 os.symlink(target, link)
-                return colors.GREEN + 'new link created' + colors.END
+                print colors.GREEN, 'new link created',
             elif target == os.readlink(link):
-                return colors.YELLOW + 'link exists' + colors.END
+                print colors.YELLOW, 'link exists',
             else:
-                return colors.RED + 'link exists and differs' + colors.END
+                print colors.RED, 'link exists and differs',
         else:
             raise e
+    print colors.END
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -51,12 +54,7 @@ if __name__ == '__main__':
         dotfiles += glob.glob(env_path + '/dotfiles/cygwin_nt/*')
 
     for file in dotfiles:
-        file_path = file
-        link_path = home_path + '/.' + os.path.basename(file)
-        action = ''
-
-        action = symlink(file_path, link_path)
-        print "%s %s->%s %s: %s" % (link_path, colors.PINK, colors.END, file_path, action)
+        symlink(file, home_path + '/.' + os.path.basename(file))
 
     # link bins
     print "\nLinking bin files:"
@@ -71,9 +69,4 @@ if __name__ == '__main__':
             raise e
 
     for file in binfiles:
-        file_path = file
-        link_path = home_path + '/bin/' + os.path.basename(file).split('.')[0]
-        action = ''
-
-        action = symlink(file_path, link_path)
-        print "%s %s->%s %s: %s" % (link_path, colors.PINK, colors.END, file_path, action)
+        symlink(file, home_path + '/bin/' + os.path.basename(file).split('.')[0])
