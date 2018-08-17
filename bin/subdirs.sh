@@ -4,7 +4,7 @@ set -eu
 for dir in "$@"; do
     if [ -d "$dir" ]
     then
-        subdirs=`find "$dir" | wc -l`
+        subdirs=`find "$dir" -type d -mindepth 1 | wc -l`
     else
         subdirs='-'
     fi
