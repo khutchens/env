@@ -10,12 +10,5 @@ fi
 # configs
 export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
 
-# bash completion support
-if [[ -f $(brew --prefix)/etc/bash_completion ]]; then
-    . $(brew --prefix)/etc/bash_completion
-else
-    echo "no 'bash_completion' support found!"
-fi
-
 # git completion
 source /usr/local/etc/bash_completion.d/git-completion.bash
