@@ -58,12 +58,16 @@ if __name__ == '__main__':
     print "Linking dot files:"
     dotfiles = glob.glob(env_path + '/dotfiles/all/*')
 
-    if uname == 'Darwin':
-        dotfiles += glob.glob(env_path + '/dotfiles/darwin/*')
-    elif uname == 'Linux':
-        dotfiles += glob.glob(env_path + '/dotfiles/linux/*')
-    elif uname == 'CYGWIN_NT':
-        dotfiles += glob.glob(env_path + '/dotfiles/cygwin_nt/*')
+    platform_dotfiles = {
+        'Darwin': '/dotfiles/darwin/*',
+        'Linux': '/dotfiles/linux/*',
+        'CYGWIN_NT': '/dotfiles/cygwin_nt/*',
+    }
+
+    try:
+        dotfiles += glob.glob(env_path + platform_dotfiles[uname])
+    except KeyError:
+        print 'No platform-specific dotfiles for:', colors.BLUE + uname + colors.END
 
     for file in dotfiles:
         symlink(file, home_path + '/.' + os.path.basename(file))
