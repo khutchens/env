@@ -13,28 +13,40 @@ class colors:
     END     = '\033[0m'
 
 def symlink(target, link):
-    arrow = colors.PINK + '->' + colors.END
-    print link, arrow, target,
-    try:
-        os.symlink(target, link)
-        print colors.GREEN, 'new link created',
-    except OSError as e:
-        if e.errno == errno.EEXIST:
-            if args.force:
-                os.remove(link)
-                os.symlink(target, link)
-                print colors.GREEN, 'new link created',
-            elif target == os.readlink(link):
-                print colors.YELLOW, 'link exists',
+    if args.check:
+        try:
+            if target == os.readlink(link):
+                action = colors.GREEN + 'exists'
             else:
-                print colors.RED, 'link exists and differs',
-        else:
-            raise e
-    print colors.END
+                action = colors.RED + 'incorrect'
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                action = colors.YELLOW + 'missing'
+            else:
+                raise e
+    else:
+        try:
+            os.symlink(target, link)
+            action = colors.GREEN + 'created'
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                if args.force:
+                    os.remove(link)
+                    os.symlink(target, link)
+                    action = colors.GREEN + 'created'
+                elif target == os.readlink(link):
+                    action = colors.YELLOW + 'exists'
+                else:
+                    action = colors.RED + 'differs'
+            else:
+                raise e
+
+    print action.ljust(14), colors.END, link, colors.PINK, '->', colors.END, target
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--force', help='Force link creation, replacing existing links', action='store_true')
+    parser.add_argument('-c', '--check', help='Check what needs to be done, but don\'t actually do anything', action='store_true')
     args = parser.parse_args()
 
     home_path = os.path.expanduser('~')
