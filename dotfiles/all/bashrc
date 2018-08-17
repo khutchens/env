@@ -17,6 +17,7 @@ export PS1="$HOST\[\e[34m\]\w\[\e[31m\] \$\[\e[0m\] "
 alias ll='ls -lh'
 alias la='ll -as'
 alias hg='history | grep'
+alias fkill='ps -ef | sed 1d | fzf -m | awk ''{print $2}'' | xargs kill -9'
 
 # ENV
 export EDITOR=vim
@@ -28,45 +29,30 @@ export FZF_DEFAULT_OPTS='-m'
 # fzf
 fe() {
     # fe - Open the selected files with the default editor
-    local files=$(fzf --query="$1" --select-1 --exit-0 | sed -e "s/\(.*\)/\'\1\'/")
-    local command="${EDITOR:-vim} -p $files"
-    [[ -n "$files" ]] && eval $command
+    local files=$(fzf --select-1 --exit-0 | sed -e "s/\(.*\)/\'\1\'/")
+    [ -n "$files" ] && ${EDITOR} $files
 }
 
 fd() {
     # fd - cd to selected directory
-    local dir
-    dir=$(find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) &&
-    cd "$dir"
+    local dir=$(find . -type d 2> /dev/null | fzf +m)
+    [ -n "$dir" ] && cd "$dir"
 }
 
 fh() {
     # fh - repeat history
-    eval $( ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
-}
-
-fkill() {
-    # fkill - kill process
-    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    if [ "x$pid" != "x" ]
-    then
-        kill -${1:-9} $pid
-    fi
+    local cmd=`history | fzf +s --tac | sed 's/ *[0-9]* *//'`
+    [ -n "$cmd" ] && history -s $cmd
+    eval $cmd
 }
 
 # extended bashrc's
 BASHRC_OS=".bashrc_platform"
-if [[ -n $BASHRC_OS ]]; then
-    if [[ -f ~/$BASHRC_OS ]]; then
-        source ~/$BASHRC_OS
-    else
-        echo "File '$BASHRC_OS' not found."
-    fi
+if [[ -f ~/$BASHRC_OS ]]; then
+    source ~/$BASHRC_OS
 fi
 
 BASHRC_LOCAL=".bashrc_local"
 if [[ -f ~/$BASHRC_LOCAL ]]; then
     source ~/$BASHRC_LOCAL
-else
-    echo "File '$BASHRC_LOCAL' not found."
 fi
