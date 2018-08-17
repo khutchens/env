@@ -41,6 +41,9 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-H> gT
 nnoremap <C-L> gt
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
+nnoremap <C-X> :bdelete<CR>
 set splitbelow
 
 " use <space> to clear hilight after searching
@@ -167,6 +170,7 @@ endfunction
 
 function FzfBuffers()
     let l:bufs = range(1, bufnr('$'))
+    call filter(l:bufs, 'buflisted(v:val)')
     call map(l:bufs, 'bufname(v:val)')
 
     silent! let l:buf = fzf#run({'source': l:bufs, 'options': '--no-multi'})
