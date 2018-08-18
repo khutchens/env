@@ -24,6 +24,13 @@ bauds: [ 230400, 115200, 57600, 38400, 9600 ]
 # Colors to use for printing device output
 colors: [ 32, 33, 34, 35, 31, 36, 37 ]
 
+# Highlight colors
+#
+# Each line is assumed to start with a tag word. If that word matches an entry here, then the line prefix will be highlighted accordingly
+highlight:
+    'ERROR': '30;41'
+    'TODO':  '30;43'
+
 # Specify default configurations for specific devices when opened. All fields are optional.
 #
 # Fields:
@@ -34,7 +41,7 @@ colors: [ 32, 33, 34, 35, 31, 36, 37 ]
 # Example:
 #
 #   devices:
-#       /dev/tty.usbserial-FT90AXRO:
+#       '/dev/tty.usbserial-FT90AXRO':
 #           baud: 3000000
 #           parity: even
 devices:
@@ -65,7 +72,7 @@ class Tty_Thread(threading.Thread):
         else:
             raise SDTException('invalid parity')
 
-    def send_line(self, line, log=True):
+    def __send_line(self, line, log=True):
         if log == True:
             color = self.color
         else:
@@ -82,31 +89,29 @@ class Tty_Thread(threading.Thread):
                 try:
                     chunk = self.device.read(256)
                 except serial.SerialException as e:
-                    self.send_line(str(e), log=False)
+                    self.__send_line(str(e), log=False)
                     return
 
                 read_time = time.time()
-                timeout = ((read_time - line_time) > 1)
+                timeout = ((read_time - line_time) > 1.0)
 
-                if len(chunk) > 0 or timeout:
-                    buf += chunk
-                    lines = re.split('\r\n|\r|\n', buf)
+                buf += chunk
+                if len(buf) == 0:
+                    continue
 
+                lines = re.split('\n\r|\r\n|\r|\n', buf)
+
+                if timeout:
+                    complete_lines = lines
+                    buf = ''
+                else:
                     complete_lines = lines[:-1]
-                    incomplete_line = lines[-1]
+                    buf = lines[-1]
 
-                    if len(complete_lines) > 0:
-                        line_time = read_time
-                        for line in complete_lines:
-                            self.send_line(line)
-
-                    if timeout:
-                        line_time = read_time
-                        if len(incomplete_line) > 0:
-                            self.send_line(incomplete_line)
-                        buf = ""
-                    else:
-                        buf = incomplete_line
+                if len(complete_lines) > 0:
+                    line_time = read_time
+                    for line in complete_lines:
+                        self.__send_line(line)
 
     def stop(self):
         self._stop.set()
@@ -115,9 +120,9 @@ class Tty_Thread(threading.Thread):
         try:
             self.device.baudrate = baud
             self.baud = baud
-            self.send_line("baud: %d" % baud, log=False)
+            self.__send_line("baud: %d" % baud, log=False)
         except AttributeError as e:
-            self.send_line("Setting baud failed, try again: " + str(e), log=False)
+            self.__send_line("Setting baud failed, try again: " + str(e), log=False)
 
 class Input_Thread(threading.Thread):
     def __init__(self, q):
@@ -180,6 +185,27 @@ if __name__ == '__main__':
     input_thread = Input_Thread(q)
     input_thread.start()
 
+    # launch threads to handle each tty
+    for path in paths:
+        n = len(tty_threads)
+        color = config['colors'][n % len(config['colors'])]
+
+        try:
+            baud = config['devices'][path]['baud']
+        except (KeyError, TypeError):
+            baud = config['bauds'][0]
+
+        try:
+            parity = config['devices'][path]['parity']
+        except (KeyError, TypeError):
+            parity = 'none'
+
+        thread = Tty_Thread(q, path, n, color, baud, parity)
+        tty_threads.append(thread)
+        thread.start()
+
+    current_thread = 0
+
     log_fname = os.environ['HOME'] + time.strftime("/.sdt/log/sdt_%Y-%m-%d_%H%Mh.log")
     print "Logging to '%s'" % log_fname
     try:
@@ -189,29 +215,8 @@ if __name__ == '__main__':
             raise
     with open(log_fname, 'a') as log_file:
         try:
-            # launch threads to handle each tty
-            for path in paths:
-                n = len(tty_threads)
-                color = config['colors'][n % len(config['colors'])]
-
-                try:
-                    baud = config['devices'][path]['baud']
-                except (KeyError, TypeError):
-                    baud = config['bauds'][0]
-
-                try:
-                    parity = config['devices'][path]['parity']
-                except (KeyError, TypeError):
-                    parity = 'none'
-
-                thread = Tty_Thread(q, path, n, color, baud, parity)
-                tty_threads.append(thread)
-                thread.start()
-
-            current_thread = 0
-
-            # handle messages from other threads
             while True:
+                # handle messages from other threads
                 msg = q.get()
 
                 # handle key commands
@@ -255,13 +260,12 @@ if __name__ == '__main__':
                     if color == 0:
                         print "-%d- %s" % (num, text)
                     else:
-                        if text.startswith("ERROR"):
-                            error_color = "30;41"
-                        elif text.startswith("TODO"):
-                            error_color = "30;43"
-                        else:
-                            error_color = "97;40"
-                        print "\033[%sm[%d]\033[0m \033[%dm%s\033[0m" % (error_color, num, color, text)
+                        match = re.match('(\w+)', text)
+                        try:
+                            tag_color = config['highlight'][match.group(1)]
+                        except:
+                            tag_color = '97;40'
+                        print "\033[%sm[%d]\033[0m \033[%dm%s\033[0m" % (tag_color, num, color, text)
                         log_file.write("[%d] %s\n" % (num, text))
                         log_file.flush()
 
