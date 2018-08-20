@@ -30,20 +30,27 @@ export FZF_DEFAULT_OPTS='-m'
 fe() {
     # fe - Open the selected files with the default editor
     local files=$(fzf --select-1 --exit-0 | sed -e "s/\(.*\)/\'\1\'/")
-    [ -n "$files" ] && ${EDITOR} $files
+    local command="${EDITOR} $files"
+    if [ -n "$files" ]; then
+        eval $command
+    fi
 }
 
 fd() {
     # fd - cd to selected directory
     local dir=$(find . -type d 2> /dev/null | fzf +m)
-    [ -n "$dir" ] && cd "$dir"
+    if [ -n "$dir" ]; then
+        cd "$dir"
+    fi
 }
 
 fh() {
     # fh - repeat history
     local cmd=`history | fzf +s --tac | sed 's/ *[0-9]* *//'`
-    [ -n "$cmd" ] && history -s $cmd
-    eval $cmd
+    if [ -n "$cmd" ]; then
+        history -s $cmd
+        eval $cmd
+    fi
 }
 
 # extended bashrc's
