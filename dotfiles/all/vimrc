@@ -18,6 +18,7 @@ syntax enable       " enable syntax highlighting by default
 set wildmode=longest,list
 set scrolloff=10    " scroll before cursor reaches edge of screen
 set showbreak=...   " prefix for wrapped lines
+set autowrite       " automatically write changes to file
 
 " set indent behavior
 set expandtab

@@ -12,6 +12,3 @@ alias unrar='unrar.exe x'
 # configs
 export LS_COLORS="no=00:ln=33:di=35:ex=32:or=41:mi=41"
 
-# use python in unbuffered mode, because the windows version doesn't recognize rxvt as an interactive term
-export PYTHONUNBUFFERED=1
-

@@ -17,7 +17,7 @@ export PS1="$HOST\[\e[34m\]\w\[\e[31m\] \$\[\e[0m\] "
 alias ll='ls -lh'
 alias la='ll -as'
 alias hg='history | grep'
-alias fkill='ps -ef | sed 1d | fzf -m | awk ''{print $2}'' | xargs kill -9'
+alias fkill='ps -ef | sed 1d | fzf -m | awk "{print \$2}" | xargs kill -9'
 
 # ENV
 export EDITOR=vim
@@ -25,6 +25,8 @@ export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='31'
 export PATH=~/bin:$PATH
 export FZF_DEFAULT_OPTS='-m'
+export PYTHONUNBUFFERED=1
+
 
 # fzf
 fe() {
