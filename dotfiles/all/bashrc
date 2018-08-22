@@ -27,6 +27,12 @@ export PATH=~/bin:$PATH
 export FZF_DEFAULT_OPTS='-m'
 export PYTHONUNBUFFERED=1
 
+# Use `bfs` instead of `find` for calls to `fzf`.
+# This just searches breadth-first, which is usually more relevant
+#   for finding a file I want to open.
+if [ -x "$(command -v bfs)" ]; then
+    export FZF_DEFAULT_COMMAND='bfs -type f -follow -maxdepth 10 2> /dev/null'
+fi
 
 # fzf
 fe() {
