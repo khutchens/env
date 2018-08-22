@@ -44,7 +44,7 @@ nnoremap <C-H> gT
 nnoremap <C-L> gt
 nnoremap <Tab> :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
-nnoremap <C-X> :bdelete<CR>
+nnoremap <leader>q :bdelete<CR>
 set splitbelow
 
 " use <space> to clear hilight after searching
