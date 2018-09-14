@@ -17,7 +17,6 @@ set tabstop=4       " tab are 4 spaces wide. this is for cases without expanded 
 syntax enable       " enable syntax highlighting by default
 set wildmode=longest,list
 set scrolloff=10    " scroll before cursor reaches edge of screen
-set showbreak=...   " prefix for wrapped lines
 set autowrite       " automatically write changes to file
 
 " set indent behavior
@@ -36,12 +35,6 @@ au BufNewFile,BufRead Makefile  setlocal noexpandtab shiftwidth=4 softtabstop=4
 let mapleader=","
 
 " make window/frame resizing and navigation easier
-map + <C-W>+
-map - <C-W>-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-H> gT
-nnoremap <C-L> gt
 nnoremap <Tab> :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <leader>q :bdelete<CR>
@@ -61,8 +54,8 @@ let python_highlight_space_errors       = 1
 
 " replace grep with ag
 if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor\ --ignore\ build
+    " Use ag over grep
+    set grepprg=ag\ --nogroup\ --nocolor\ --ignore\ build
 endif
 
 " fzf
@@ -195,26 +188,3 @@ function FzfHelp()
     call FzfTagSearch('', '', 0)
 endfunction
 
-" easy open/close related header
-nnoremap <silent> <leader>h :call HeaderToggle(bufname("%"))<CR>
-function HeaderToggle(current_fname)
-    if(a:current_fname =~ '\.c')
-        let l:compliment_fname = substitute(a:current_fname, '\.c', '.h', '')
-        let l:compliment_fname = substitute(l:compliment_fname, '/src/\(.*\.h\)', '/include/\1', '')
-        let l:command = "top 25sp "
-    elseif (a:current_fname =~ '\.h')
-        let l:compliment_fname = substitute(a:current_fname, '\.h', '.c', '')
-        let l:compliment_fname = substitute(l:compliment_fname, '/include/\(.*\.c\)', '/src/\1', '')
-        let l:command = "bot 60sp "
-    endif
-
-    echo a:current_fname ' -> ' l:compliment_fname
-
-    if(exists('l:compliment_fname'))
-        if(bufwinnr(l:compliment_fname) < 0)
-            exec l:command . l:compliment_fname
-        else
-            q
-        endif
-    endif
-endfunction
