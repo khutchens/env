@@ -16,7 +16,6 @@ export PS1="$HOST\[\e[34m\]\w\[\e[31m\] \$\[\e[0m\] "
 # aliases
 alias ll='ls -lh'
 alias la='ll -as'
-alias hg='history | grep'
 alias fkill='ps -ef | sed 1d | fzf -m | awk "{print \$2}" | xargs kill -9'
 
 # ENV
