@@ -72,9 +72,7 @@ nnoremap <silent> <leader>fh :call FzfHelp()<CR>
 function FzfTagsfile()
     let l:tags = ''
     silent! let l:files = fzf#run({'options': '--query=tags'})
-    for l:file in l:files
-        let l:tags = l:file . ','
-    endfor
+    let l:tags = join(l:files, ",")
     execute('set tags=' . l:tags)
     execute('set tags')
 endfunction
