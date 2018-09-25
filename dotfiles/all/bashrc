@@ -52,6 +52,14 @@ fd() {
     fi
 }
 
+fdu() {
+    # fd - cd to selected directory
+    local dir=$(lsup | fzf +m)
+    if [ -n "$dir" ]; then
+        cd "$dir"
+    fi
+}
+
 fh() {
     # fh - repeat history
     local cmd=`history | fzf +s --tac | sed 's/ *[0-9]* *//'`
