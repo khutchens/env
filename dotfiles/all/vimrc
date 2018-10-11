@@ -70,10 +70,14 @@ nnoremap <silent> <leader>fb :call FzfBuffers()<CR>
 nnoremap <silent> <leader>fh :call FzfHelp()<CR>
 
 function FzfTagsfile()
-    let l:tags = ''
-    silent! let l:files = fzf#run({'options': '--query=tags'})
-    let l:tags = join(l:files, ",")
-    execute('set tags=' . l:tags)
+    " select tag files
+    let l:files = []
+    for l:file in fzf#run({'options': '--query=tags'})
+        " shorten file names as much as possible while removing leading ./ since it confuses vim
+        let l:files += [fnamemodify(l:file, ':~:.')]
+    endfor
+
+    execute('set tags=' . join(l:files, ","))
     execute('set tags')
 endfunction
 
