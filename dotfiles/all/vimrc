@@ -66,7 +66,8 @@ nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f', 1)<CR>
 nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '', 1)<CR>
 nnoremap <silent> <leader>fV :call FzfTagSearch('', '', 1)<CR>
 nnoremap <silent> <leader>fy :call FzfTagInsert('', '')<CR>
-nnoremap <silent> <leader>fb :call FzfBuffers()<CR>
+nnoremap <silent> <leader>fb :call FzfBuffers('buffer', 0)<CR>
+nnoremap <silent> <leader>fq :call FzfBuffers('bdelete', 1)<CR>
 nnoremap <silent> <leader>fh :call FzfHelp()<CR>
 
 function FzfTagsfile()
@@ -164,18 +165,20 @@ function FzfTagInsert(file, kind)
     let @" = l:tag.name
 endfunction
 
-function FzfBuffers()
+function FzfBuffers(command, multi)
     let l:bufs = range(1, bufnr('$'))
     call filter(l:bufs, 'buflisted(v:val)')
     call map(l:bufs, 'bufname(v:val)')
 
-    silent! let l:buf = fzf#run({'source': l:bufs, 'options': '--no-multi'})
-    if len(l:buf) != 1
-        return
+    if a:multi
+        silent! let l:bufs_selected = fzf#run({'source': l:bufs})
+    else
+        silent! let l:bufs_selected = fzf#run({'source': l:bufs, 'options': '--no-multi'})
     endif
-    let l:buf = l:buf[0]
 
-    execute('buffer ' . l:buf)
+    for l:buf in l:bufs_selected
+        execute(a:command . ' ' . l:buf)
+    endfor
 endfunction
 
 function FzfHelp()
