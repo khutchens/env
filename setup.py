@@ -12,7 +12,7 @@ class colors:
     CYAN    = '\033[36m'
     END     = '\033[0m'
 
-def symlink(target, link):
+def symlink(target, link, rel_path):
     if args.force:
         try:
             os.remove(link)
@@ -33,7 +33,13 @@ def symlink(target, link):
             raise e
 
     def print_action(color, action):
-        print color + action.ljust(14) + colors.END + link + colors.PINK + ' -> ' + colors.END + target
+        action_color = color + action.ljust(10) + colors.END
+        arrow_color = colors.PINK + ' -> ' + colors.END
+
+        link_rel = os.path.relpath(link, rel_path)
+        target_rel = os.path.relpath(target, rel_path)
+
+        print action_color + link_rel + arrow_color + target_rel
 
     if existing == target:
         print_action(colors.BLUE, 'exists')
@@ -75,7 +81,7 @@ if __name__ == '__main__':
         print 'No platform-specific dotfiles for:', colors.BLUE + uname + colors.END
 
     for file in dotfiles:
-        symlink(file, home_path + '/.' + os.path.basename(file))
+        symlink(file, home_path + '/.' + os.path.basename(file), home_path)
 
     # link bins
     print "\nLinking bin files:"
@@ -90,4 +96,4 @@ if __name__ == '__main__':
             raise e
 
     for file in binfiles:
-        symlink(file, home_path + '/bin/' + os.path.basename(file).split('.')[0])
+        symlink(file, home_path + '/bin/' + os.path.basename(file).split('.')[0], home_path)
