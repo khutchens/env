@@ -13,35 +13,40 @@ class colors:
     END     = '\033[0m'
 
 def symlink(target, link):
-    if args.check:
+    if args.force:
         try:
-            if target == os.readlink(link):
-                action = colors.GREEN + 'exists'
-            else:
-                action = colors.RED + 'incorrect'
+            os.remove(link)
         except OSError as e:
             if e.errno == errno.ENOENT:
-                action = colors.YELLOW + 'missing'
-            else:
-                raise e
-    else:
-        try:
-            os.symlink(target, link)
-            action = colors.GREEN + 'created'
-        except OSError as e:
-            if e.errno == errno.EEXIST:
-                if args.force:
-                    os.remove(link)
-                    os.symlink(target, link)
-                    action = colors.GREEN + 'created'
-                elif target == os.readlink(link):
-                    action = colors.YELLOW + 'exists'
-                else:
-                    action = colors.RED + 'differs'
+                pass
             else:
                 raise e
 
-    print action.ljust(14), colors.END, link, colors.PINK, '->', colors.END, target
+    try:
+        existing = os.readlink(link)
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            existing = None
+        elif e.errno == errno.EINVAL:
+            existing = link
+        else:
+            raise e
+
+    def print_action(color, action):
+        print color + action.ljust(14) + colors.END + link + colors.PINK + ' -> ' + colors.END + target
+
+    if existing == target:
+        print_action(colors.BLUE, 'exists')
+    elif existing == link:
+        print_action(colors.RED, 'conflict')
+    elif existing == None:
+        if args.check:
+            print_action(colors.YELLOW, 'missing')
+        else:
+            os.symlink(target, link)
+            print_action(colors.GREEN, 'created')
+    else:
+        print_action(colors.RED, 'incorrect')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
