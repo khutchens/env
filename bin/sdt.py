@@ -172,6 +172,9 @@ if __name__ == '__main__':
     for path in config['paths']:
         paths |= set(glob.glob(path))
 
+    for path in config['paths_blacklist']:
+        paths -= set(glob.glob(path))
+
     if len(paths) < 1:
         print "No devices found."
         sys.exit(0)
