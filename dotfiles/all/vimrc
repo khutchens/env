@@ -30,6 +30,7 @@ set t_ti= t_te=
 " highlight modes for unusual file types
 au BufNewFile,BufRead makefile  setlocal noexpandtab shiftwidth=4 softtabstop=4
 au BufNewFile,BufRead Makefile  setlocal noexpandtab shiftwidth=4 softtabstop=4
+au BufNewFile,BufRead *.mk  setlocal noexpandtab shiftwidth=4 softtabstop=4
 
 " leader, obviously
 let mapleader=","
@@ -61,9 +62,9 @@ endif
 " fzf
 nnoremap <silent> <leader>fe :call fzf#run({'sink': 'edit'})<CR>
 nnoremap <silent> <leader>ft :call FzfTagsfile()<CR>
-nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%:p'), 'f', 1)<CR>
+nnoremap <silent> <leader>ff :call FzfTagSearch(expand('%'), 'f', 1)<CR>
 nnoremap <silent> <leader>fF :call FzfTagSearch('', 'f', 1)<CR>
-nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%:p'), '', 1)<CR>
+nnoremap <silent> <leader>fv :call FzfTagSearch(expand('%'), '', 1)<CR>
 nnoremap <silent> <leader>fV :call FzfTagSearch('', '', 1)<CR>
 nnoremap <silent> <leader>fy :call FzfTagInsert('', '')<CR>
 nnoremap <silent> <leader>fb :call FzfBuffers('buffer', 0)<CR>
@@ -79,7 +80,7 @@ function FzfTagsfile()
     endfor
 
     execute('set tags=' . join(l:files, ","))
-    execute('set tags')
+    execute('set tags notagrelative')
 endfunction
 
 function FzfTagInternal(file, kind)
