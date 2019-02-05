@@ -119,8 +119,8 @@ function FzfTagExternal(file, kind)
     let l:source_command = []
 
     call add(l:source_command, 'grep -v ! ' . join(l:tagfiles, ' '))
-    if a:kind != '' | call add(l:source_command, 'awk -F \t ''{if ($4 == "' . a:kind . '") { print } }''') | endif
-    if a:file != '' | call add(l:source_command, 'awk -F \t ''{if ($2 == "' . a:file . '") { print } }''') | endif
+    if a:kind != '' | call add(l:source_command, 'awk -F \t ''{if ("' . a:kind . '" == $4) { print } }''') | endif
+    if a:file != '' | call add(l:source_command, 'awk -F \t ''{if ("' . a:file . '" ~ $2) { print } }''') | endif
     call add(l:source_command, 'awk -F \t ''{print $1}''')
 
     let l:source_command_string = join(l:source_command, ' | ')
