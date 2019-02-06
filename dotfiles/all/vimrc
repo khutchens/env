@@ -70,7 +70,13 @@ nnoremap <silent> <leader>fy :call FzfTagInsert('', '')<CR>
 nnoremap <silent> <leader>fb :call FzfBuffers('buffer', 0)<CR>
 nnoremap <silent> <leader>fq :call FzfBuffers('bdelete', 1)<CR>
 nnoremap <silent> <leader>fh :call FzfHelp()<CR>
-nnoremap <silent> <leader>ss :% !clang-format -style=file<CR>
+nnoremap <silent> <leader>ss :call ClangFormat()<CR>
+
+function ClangFormat()
+    let l:pos = getpos('.')
+    execute('% !clang-format -style=file')
+    call setpos('.', l:pos)
+endfunction
 
 function FzfTagsfile()
     " select tag files
