@@ -39,6 +39,7 @@ let mapleader=","
 nnoremap <Tab> :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <leader>q :bdelete<CR>
+nnoremap <leader>wq :w<CR>:bdelete<CR>
 set splitbelow
 
 " use <space> to clear hilight after searching
