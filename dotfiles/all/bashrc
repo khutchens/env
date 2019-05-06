@@ -45,7 +45,11 @@ fe() {
 
 fd() {
     # fd - cd to selected directory
-    local dir=$(find . -type d 2> /dev/null | fzf +m)
+    if [ -x "$(command -v bfs)" ]; then
+        local dir=$(bfs -type d 2> /dev/null | fzf +m)
+    else
+        local dir=$(find . -type d 2> /dev/null | fzf +m)
+    fi
     if [ -n "$dir" ]; then
         cd "$dir"
     fi
