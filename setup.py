@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os, errno, glob, re
 import argparse
@@ -39,7 +39,7 @@ def symlink(target, link, rel_path):
         link_rel = os.path.relpath(link, rel_path)
         target_rel = os.path.relpath(target, rel_path)
 
-        print action_color + link_rel + arrow_color + target_rel
+        print(action_color + link_rel + arrow_color + target_rel)
 
     if existing == target:
         print_action(colors.BLUE, 'exists')
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     uname = os.uname()[0]
 
     # link dotfiles
-    print "Linking dot files:"
+    print("Linking dot files:")
     dotfiles = glob.glob(env_path + '/dotfiles/all/*')
 
     platform_dotfiles = {
@@ -78,13 +78,13 @@ if __name__ == '__main__':
     try:
         dotfiles += glob.glob(env_path + platform_dotfiles[uname])
     except KeyError:
-        print 'No platform-specific dotfiles for:', colors.BLUE + uname + colors.END
+        print('No platform-specific dotfiles for:', colors.BLUE + uname + colors.END)
 
     for file in dotfiles:
         symlink(file, home_path + '/.' + os.path.basename(file), home_path)
 
     # link bins
-    print "\nLinking bin files:"
+    print("\nLinking bin files:")
     binfiles = glob.glob(env_path + '/bin/*')
 
     try:
