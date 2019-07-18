@@ -107,6 +107,7 @@ if __name__ == '__main__':
         print('No platform-specific dotfiles for:', colors.BLUE + uname + colors.END)
 
     for path in paths:
+        os.makedirs(path['from'], exist_ok=True)
         files = glob.glob(path['to'] + '/*')
         for file in files:
             linkname = os.path.basename(file)
