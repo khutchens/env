@@ -29,4 +29,3 @@ set backtrace past-entry on
 set history save on
 
 source ~/.gdb/cortex_m.gdb
-source ~/.gdb/free_rtos.gdb
