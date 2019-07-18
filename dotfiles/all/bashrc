@@ -18,7 +18,7 @@ alias ll='ls -lh'
 alias la='ll -as'
 alias fkill='ps -ef | sed 1d | fzf -m | awk "{print \$2}" | xargs kill -9'
 
-if command -v nvim >/dev/null; then
+if [ -x "$(command -v nvim)" ]; then
     alias vim='nvim'
 else
     echo Nvim not found, falling back to vim.
