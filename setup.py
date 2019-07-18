@@ -65,35 +65,60 @@ if __name__ == '__main__':
     env_path = os.path.dirname(script_path)
     uname = os.uname()[0]
 
-    # link dotfiles
-    print("Linking dot files:")
-    dotfiles = glob.glob(env_path + '/dotfiles/all/*')
+    platform_paths = {
+        'all': [
+            {
+                'to':       env_path + '/dotfiles/all/',
+                'from':     home_path,
+                'prefix':   '.',
+            },
+            {
+                'to':       env_path + '/bin/',
+                'from':     home_path + '/bin/',
+                'remove_suffix': '.'
+            },
+            {
+                'to':       env_path + '/dotfiles/config/',
+                'from':     home_path + '/.config/',
+            },
+        ],
 
-    platform_dotfiles = {
-        'Darwin': '/dotfiles/darwin/*',
-        'Linux': '/dotfiles/linux/*',
-        'CYGWIN_NT': '/dotfiles/cygwin_nt/*',
+        'Darwin': [
+            {
+                'to':       env_path + '/dotfiles/darwin/',
+                'from':     home_path,
+                'prefix':   '.',
+            },
+        ],
+
+        'Linux': [
+            {
+                'to':       env_path + '/dotfiles/linux/',
+                'from':     home_path,
+                'prefix':   '.',
+            },
+        ],
     }
 
+    paths = platform_paths['all']
     try:
-        dotfiles += glob.glob(env_path + platform_dotfiles[uname])
+        paths += platform_paths[uname]
     except KeyError:
         print('No platform-specific dotfiles for:', colors.BLUE + uname + colors.END)
 
-    for file in dotfiles:
-        symlink(file, home_path + '/.' + os.path.basename(file), home_path)
+    for path in paths:
+        files = glob.glob(path['to'] + '/*')
+        for file in files:
+            linkname = os.path.basename(file)
 
-    # link bins
-    print("\nLinking bin files:")
-    binfiles = glob.glob(env_path + '/bin/*')
+            try:
+                linkname = linkname.split(path['remove_suffix'])[0]
+            except KeyError:
+                pass
 
-    try:
-        os.mkdir(home_path + '/bin')
-    except OSError as e:
-        if e.errno == errno.EEXIST:
-            pass
-        else:
-            raise e
+            try:
+                linkname = path['prefix'] + linkname
+            except KeyError:
+                pass
+            symlink(file, path['from'] + '/' + linkname, home_path)
 
-    for file in binfiles:
-        symlink(file, home_path + '/bin/' + os.path.basename(file).split('.')[0], home_path)
