@@ -5,48 +5,34 @@ if exists("syntax on")
     syntax reset
 endif
 
-" Generic color groups for quick highlighting
-hi  rd          ctermfg=DarkRed         guifg=#fd382f
-hi  or          ctermfg=DarkYellow      guifg=#f5aa11
-hi  gr          ctermfg=DarkGreen       guifg=#2c902f
-hi  bl          ctermfg=DarkBlue        guifg=#2e69c1
-hi  mg          ctermfg=DarkMagenta     guifg=#ca3d8a
-
 " My syntax colors
-hi  Normal      ctermfg=15              guifg=#ffffff guibg=#000000
-hi  Comment     ctermfg=DarkBlue        guifg=#2e69c1
-hi  Constant    ctermfg=DarkRed         guifg=#fd382f
-hi  Type        ctermfg=DarkMagenta     guifg=#ca3d8a
-hi  PreProc     ctermfg=DarkMagenta     guifg=#ca3d8a
-hi  Statement   ctermfg=DarkMagenta     guifg=#ca3d8a
-hi  Identifier  ctermfg=DarkGreen       guifg=#2c902f
-hi  Function	ctermfg=DarkYellow      guifg=#f5aa11
-hi  LineNr      ctermfg=DarkGrey        guifg=#333333
-hi  NonText     ctermfg=DarkBlue        guifg=#2e69c1
-hi  Search      ctermfg=White           guifg=#ffffff   ctermbg=DarkMagenta guibg=#ca3d8a
-hi  Special     ctermfg=DarkYellow      guifg=#f5aa11
+hi  Normal      ctermfg=White   cterm=none
+hi  Comment     ctermfg=DarkBlue    cterm=none
+hi  Constant    ctermfg=DarkRed cterm=none
+hi  Type        ctermfg=DarkMagenta cterm=none
+hi  PreProc     ctermfg=DarkMagenta cterm=none
+hi  Statement   ctermfg=DarkMagenta cterm=none
+hi  Identifier  ctermfg=DarkGreen   cterm=none
+hi  Function	ctermfg=3           cterm=none
+hi  LineNr      ctermfg=DarkGrey    cterm=none
+hi  NonText     ctermfg=DarkBlue    cterm=none
+hi  Search      ctermfg=White ctermbg=DarkMagenta  cterm=none
+hi  Special     ctermfg=3           cterm=none
 
-" Make tabs look better
-hi  TabLine     ctermfg=Black   ctermbg=Grey    cterm=NONE
-hi  TabLineSel  ctermfg=15      ctermbg=Grey    cterm=NONE
-hi  TabLineFill ctermfg=15      ctermbg=Grey    cterm=NONE
-
-" Menu colors (mostly for completion menu)
-hi  pMenu       ctermfg=Black   ctermbg=Grey    cterm=NONE
-hi  pMenuSel    ctermfg=15      ctermbg=Grey    cterm=NONE
+hi  CommentBright ctermfg=DarkCyan cterm=none
 
 " Copied from standard colors for quick modification
 "hi SpecialKey     term=bold cterm=bold ctermfg=4 guifg=Cyan
 "hi NonText        term=bold ctermfg=4 gui=bold guifg=#2e69c1
-hi Directory       ctermfg=DarkCyan guifg=DarkCyan
+"hi Directory       ctermfg=DarkCyan guifg=DarkCyan
 "hi ErrorMsg       term=standout cterm=bold ctermfg=7 ctermbg=1 guifg=White guibg=Red
 "hi IncSearch      term=reverse cterm=reverse gui=reverse
 "hi Search         term=reverse cterm=bold ctermfg=7 ctermbg=5 guifg=#ffffff guibg=Yellow
-hi MoreMsg         ctermfg=DarkGreen guifg=DarkGreen
+hi MoreMsg         ctermfg=DarkGreen
 "hi ModeMsg        term=bold cterm=bold gui=bold
 "hi LineNr         term=underline cterm=bold ctermfg=0 guifg=#333333
 "hi Question       term=standout cterm=bold ctermfg=2 gui=bold guifg=Green
-"hi StatusLine     term=bold,reverse cterm=reverse gui=bold,reverse
+hi StatusLine     cterm=reverse
 "hi StatusLineNC   term=reverse cterm=reverse gui=reverse
 "hi VertSplit      term=reverse cterm=reverse gui=reverse
 "hi Title          term=bold cterm=bold ctermfg=5 gui=bold guifg=Magenta
@@ -54,7 +40,7 @@ hi MoreMsg         ctermfg=DarkGreen guifg=DarkGreen
 "hi VisualNOS      term=bold,underline cterm=underline gui=bold,underline
 "hi WarningMsg     term=standout cterm=bold ctermfg=1 guifg=Red
 "hi WildMenu       term=standout ctermfg=0 ctermbg=3 guifg=Black guibg=Yellow
-"hi Folded         term=standout cterm=bold ctermfg=6 ctermbg=0 guifg=Cyan guibg=DarkGrey
+hi Folded         ctermfg=DarkGrey ctermbg=none
 "hi FoldColumn     term=standout cterm=bold ctermfg=6 ctermbg=0 guifg=Cyan guibg=Grey
 "hi DiffAdd        term=bold ctermbg=4 guibg=DarkBlue
 "hi DiffChange     term=bold ctermbg=5 guibg=DarkMagenta
@@ -72,11 +58,11 @@ hi MoreMsg         ctermfg=DarkGreen guifg=DarkGreen
 "hi CursorColumn   term=reverse ctermbg=0 guibg=Grey40
 "hi CursorLine     term=underline cterm=underline guibg=Grey40
 "hi ColorColumn    term=reverse ctermbg=1 guibg=DarkRed
-"hi MatchParen     term=reverse ctermbg=6 guibg=DarkCyan
+hi MatchParen     cterm=underline ctermbg=none
 "hi Underlined     term=underline cterm=bold,underline ctermfg=4 gui=underline guifg=#80a0ff
 "hi Ignore         ctermfg=0 guifg=bg
 "hi Error          term=reverse cterm=bold ctermfg=7 ctermbg=1 guifg=White guibg=Red
-"hi Todo           term=standout ctermfg=0 ctermbg=3 guifg=Blue guibg=Yellow
+hi Todo           ctermfg=3 ctermbg=none cterm=none
 
 let colors_name="kyle"
 
