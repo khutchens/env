@@ -357,7 +357,7 @@ try
     throw v:exception
   endtry
 
-  if has('nvim') && !has_key(dict, 'dir')
+  if !has_key(dict, 'dir')
     let dict.dir = s:fzf_getcwd()
   endif
   if has('win32unix') && has_key(dict, 'dir')
@@ -457,7 +457,8 @@ function! s:pushd(dict)
     let cwd = s:fzf_getcwd()
     let w:fzf_pushd = {
     \   'command': haslocaldir() ? 'lcd' : (exists(':tcd') && haslocaldir(-1) ? 'tcd' : 'cd'),
-    \   'origin': cwd
+    \   'origin': cwd,
+    \   'bufname': bufname('')
     \ }
     execute 'lcd' s:escape(a:dict.dir)
     let cwd = s:fzf_getcwd()
@@ -477,17 +478,35 @@ function! s:dopopd()
   if !exists('w:fzf_pushd')
     return
   endif
-  execute w:fzf_pushd.command s:escape(w:fzf_pushd.origin)
+
+  " FIXME: We temporarily change the working directory to 'dir' entry
+  " of options dictionary (set to the current working directory if not given)
+  " before running fzf.
+  "
+  " e.g. call fzf#run({'dir': '/tmp', 'source': 'ls', 'sink': 'e'})
+  "
+  " After processing the sink function, we have to restore the current working
+  " directory. But doing so may not be desirable if the function changed the
+  " working directory on purpose.
+  "
+  " So how can we tell if we should do it or not? A simple heuristic we use
+  " here is that we change directory only if the current working directory
+  " matches 'dir' entry. However, it is possible that the sink function did
+  " change the directory to 'dir'. In that case, the user will have an
+  " unexpected result.
+  if s:fzf_getcwd() ==# w:fzf_pushd.dir && (!&autochdir || w:fzf_pushd.bufname ==# bufname(''))
+    execute w:fzf_pushd.command s:escape(w:fzf_pushd.origin)
+  endif
   unlet w:fzf_pushd
 endfunction
 
 function! s:xterm_launcher()
-  let fmt = 'xterm -T "[fzf]" -bg "\%s" -fg "\%s" -geometry %dx%d+%d+%d -e bash -ic %%s'
+  let fmt = 'xterm -T "[fzf]" -bg "%s" -fg "%s" -geometry %dx%d+%d+%d -e bash -ic %%s'
   if has('gui_macvim')
     let fmt .= '&& osascript -e "tell application \"MacVim\" to activate"'
   endif
   return printf(fmt,
-    \ synIDattr(hlID("Normal"), "bg"), synIDattr(hlID("Normal"), "fg"),
+    \ escape(synIDattr(hlID("Normal"), "bg"), '#'), escape(synIDattr(hlID("Normal"), "fg"), '#'),
     \ &columns, &lines/2, getwinposx(), getwinposy())
 endfunction
 unlet! s:launcher
@@ -588,8 +607,9 @@ function! s:calc_size(max, val, dict)
     let srcsz = len(a:dict.source)
   endif
 
-  let opts = s:evaluate_opts(get(a:dict, 'options', '')).$FZF_DEFAULT_OPTS
+  let opts = $FZF_DEFAULT_OPTS.' '.s:evaluate_opts(get(a:dict, 'options', ''))
   let margin = stridx(opts, '--inline-info') > stridx(opts, '--no-inline-info') ? 1 : 2
+  let margin += stridx(opts, '--border') > stridx(opts, '--no-border') ? 2 : 0
   let margin += stridx(opts, '--header') > stridx(opts, '--no-header')
   return srcsz >= 0 ? min([srcsz + margin, size]) : size
 endfunction
@@ -724,19 +744,7 @@ function! s:collect(temps) abort
 endfunction
 
 function! s:callback(dict, lines) abort
-  " Since anything can be done in the sink function, there is no telling that
-  " the change of the working directory was made by &autochdir setting.
-  "
-  " We use the following heuristic to determine whether to restore CWD:
-  " - Always restore the current directory when &autochdir is disabled.
-  "   FIXME This makes it impossible to change directory from inside the sink
-  "   function when &autochdir is not used.
-  " - In case of an error or an interrupt, a:lines will be empty.
-  "   And it will be an array of a single empty string when fzf was finished
-  "   without a match. In these cases, we presume that the change of the
-  "   directory is not expected and should be undone.
-  let popd = has_key(a:dict, 'pushd') &&
-        \ (!&autochdir || (empty(a:lines) || len(a:lines) == 1 && empty(a:lines[0])))
+  let popd = has_key(a:dict, 'pushd')
   if popd
     let w:fzf_pushd = a:dict.pushd
   endif
@@ -744,6 +752,8 @@ function! s:callback(dict, lines) abort
   try
     if has_key(a:dict, 'sink')
       for line in a:lines
+		echom a:dict.sink
+		echom line
         if type(a:dict.sink) == 2
           call a:dict.sink(line)
         else
