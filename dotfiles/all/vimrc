@@ -39,6 +39,9 @@ nnoremap <leader>wq :w<CR>:bdelete<CR>
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
 
+" remap :tag to :tjump, which prompts for selection when duplicate tags exist
+nnoremap <C-]> g<C-]>
+
 " python highlighting options
 let python_highlight_all = 1
 
@@ -55,10 +58,10 @@ nnoremap <silent> <leader>fq :call fzf#run({'down': '30%', 'source': Bufs(), 'si
 
 nnoremap <silent> <leader>ft :call fzf#run({'down': '30%', 'sink*': funcref('Tagfiles'), 'options': '--query=tags'})<CR>
 nnoremap <silent> <leader>fy :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink*': funcref('Yank'), 'options': '--no-multi'})<CR>
-nnoremap <silent> <leader>ff :call fzf#run({'down': '30%', 'source': Tags(expand("%"), 'f'), 'sink': 'tag', 'options': '--no-multi'})<CR>
-nnoremap <silent> <leader>fF :call fzf#run({'down': '30%', 'source': Tags('', 'f'), 'sink': 'tag', 'options': '--no-multi'})<CR>
-nnoremap <silent> <leader>fv :call fzf#run({'down': '30%', 'source': Tags(expand("%"), ''), 'sink': 'tag', 'options': '--no-multi'})<CR>
-nnoremap <silent> <leader>fV :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink': 'tag', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>ff :call fzf#run({'down': '30%', 'source': Tags(expand("%"), 'f'), 'sink': 'tjump', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fF :call fzf#run({'down': '30%', 'source': Tags('', 'f'), 'sink': 'tjump', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fv :call fzf#run({'down': '30%', 'source': Tags(expand("%"), ''), 'sink': 'tjump', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fV :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink': 'tjump', 'options': '--no-multi'})<CR>
 
 function Tagfiles(files)
     let l:files = []
