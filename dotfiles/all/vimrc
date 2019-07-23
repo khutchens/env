@@ -79,7 +79,7 @@ function Tags(file, kind)
 
     " filter out unwanted files and types
     if a:kind != '' | call filter(l:tags, 'v:val.kind == a:kind') | endif
-    if a:file != '' | call filter(l:tags, 'v:val.filename == a:file') | endif
+    if a:file != '' | call filter(l:tags, 'v:val.filename == fnamemodify(a:file, ":~:.")') | endif
 
     " fzf just wants names
     return map(l:tags, 'v:val.name')
