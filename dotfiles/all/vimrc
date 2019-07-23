@@ -49,15 +49,16 @@ if executable('ag')
 endif
 
 " fzf
-nnoremap <silent> <leader>fe :call fzf#run({'sink': 'edit'})<CR>
-nnoremap <silent> <leader>ft :call fzf#run({'options': '--query=tags', 'sink*': funcref('Tagfiles')})<CR>
-nnoremap <silent> <leader>ff :call fzf#run({'source': Tags(expand("%"), 'f'), 'options': '--no-multi', 'sink': 'tag'})<CR>
-nnoremap <silent> <leader>fF :call fzf#run({'source': Tags('', 'f'), 'options': '--no-multi', 'sink': 'tag'})<CR>
-nnoremap <silent> <leader>fv :call fzf#run({'source': Tags(expand("%"), ''), 'options': '--no-multi', 'sink': 'tag'})<CR>
-nnoremap <silent> <leader>fV :call fzf#run({'source': Tags('', ''), 'options': '--no-multi', 'sink': 'tag'})<CR>
-nnoremap <silent> <leader>fy :call fzf#run({'source': Tags('', ''), 'options': '--no-multi', 'sink*': funcref('Yank')})<CR>
-nnoremap <silent> <leader>fb :call fzf#run({'source': Bufs(), 'options': '--no-multi', 'sink': 'buffer'})<CR>
-nnoremap <silent> <leader>fq :call fzf#run({'source': Bufs(), 'sink': 'bdelete'})<CR>
+nnoremap <silent> <leader>fe :call fzf#run({'down': '30%', 'sink': 'edit'})<CR>
+nnoremap <silent> <leader>fb :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'buffer', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fq :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'bdelete'})<CR>
+
+nnoremap <silent> <leader>ft :call fzf#run({'down': '30%', 'sink*': funcref('Tagfiles'), 'options': '--query=tags'})<CR>
+nnoremap <silent> <leader>fy :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink*': funcref('Yank'), 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>ff :call fzf#run({'down': '30%', 'source': Tags(expand("%"), 'f'), 'sink': 'tag', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fF :call fzf#run({'down': '30%', 'source': Tags('', 'f'), 'sink': 'tag', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fv :call fzf#run({'down': '30%', 'source': Tags(expand("%"), ''), 'sink': 'tag', 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fV :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink': 'tag', 'options': '--no-multi'})<CR>
 
 function Tagfiles(files)
     let l:files = []
