@@ -23,6 +23,10 @@ set softtabstop=4
 " handle tabs correctly for makefiles
 au BufNewFile,BufRead makefile,Makefile,*.mk  setlocal noexpandtab shiftwidth=4 softtabstop=4
 
+" disable statusline for fzf windows
+autocmd FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
 " leader, obviously
 let mapleader=","
 
