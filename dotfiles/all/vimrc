@@ -58,6 +58,7 @@ nnoremap <silent> <leader>fq :call fzf#run({'down': '30%', 'source': Bufs(), 'si
 
 nnoremap <silent> <leader>ft :call fzf#run({'down': '30%', 'sink*': funcref('Tagfiles'), 'options': '--query=tags'})<CR>
 nnoremap <silent> <leader>fy :call fzf#run({'down': '30%', 'source': Tags('', ''), 'sink*': funcref('Yank'), 'options': '--no-multi'})<CR>
+nnoremap <silent> <leader>fs :call fzf#run({'down': '30%', 'source': Tags(expand("%"), ''), 'sink*': funcref('Search'), 'options': '--no-multi'})<CR>
 nnoremap <silent> <leader>ff :call fzf#run({'down': '30%', 'source': Tags(expand("%"), 'f'), 'sink': 'tjump', 'options': '--no-multi'})<CR>
 nnoremap <silent> <leader>fF :call fzf#run({'down': '30%', 'source': Tags('', 'f'), 'sink': 'tjump', 'options': '--no-multi'})<CR>
 nnoremap <silent> <leader>fv :call fzf#run({'down': '30%', 'source': Tags(expand("%"), ''), 'sink': 'tjump', 'options': '--no-multi'})<CR>
@@ -87,6 +88,11 @@ endfunction
 
 function Yank(strings)
     let @" = a:strings[0]
+endfunction
+
+function Search(strings)
+    let @/ = '\<' . a:strings[0] . '\>'
+    call feedkeys('n')
 endfunction
 
 function Bufs()
