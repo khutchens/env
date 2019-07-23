@@ -41,7 +41,7 @@ hi StatusLine     cterm=reverse
 "hi WarningMsg     term=standout cterm=bold ctermfg=1 guifg=Red
 "hi WildMenu       term=standout ctermfg=0 ctermbg=3 guifg=Black guibg=Yellow
 hi Folded         ctermfg=DarkGrey ctermbg=none
-"hi FoldColumn     term=standout cterm=bold ctermfg=6 ctermbg=0 guifg=Cyan guibg=Grey
+hi FoldColumn     ctermfg=DarkCyan ctermbg=none
 "hi DiffAdd        term=bold ctermbg=4 guibg=DarkBlue
 "hi DiffChange     term=bold ctermbg=5 guibg=DarkMagenta
 "hi DiffDelete     term=bold cterm=bold ctermfg=4 ctermbg=6 gui=bold guifg=Blue guibg=DarkCyan

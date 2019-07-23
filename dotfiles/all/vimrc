@@ -4,6 +4,7 @@ colorscheme kyle
 " general behavior
 set backspace=2     " make backspace work like most other apps
 set number          " turn line numbers on
+set foldcolumn=1    " turn on fold column
 set hlsearch        " highlight search results so they're easier to find
 set laststatus=2    " always show status line
 set noerrorbells    " annoying noises
