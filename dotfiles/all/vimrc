@@ -46,12 +46,6 @@ nnoremap <C-]> g<C-]>
 " python highlighting options
 let python_highlight_all = 1
 
-" replace grep with ag
-if executable('ag')
-    " Use ag over grep
-    set grepprg=ag\ --nogroup\ --nocolor\ --ignore\ build
-endif
-
 " fzf
 nnoremap <silent> <leader>fe :call fzf#run({'down': '30%', 'sink': 'edit'})<CR>
 nnoremap <silent> <leader>fb :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'buffer', 'options': '--no-multi'})<CR>
