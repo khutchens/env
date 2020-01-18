@@ -86,16 +86,19 @@ if __name__ == '__main__':
         n += 1
 
     print("")
-    exit = False
-    while not exit:
-        reads, writes, exes = select.select(sdts, [], [])
-        for sdt in reads:
-            line = sdt.read_line()
-            if line == None:
-                print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.path)))
-                sdts.remove(sdt)
-                if len(sdts) == 0:
-                    exit = True
-            else:
-                print(sdt.format_line(line))
+    try:
+        exit = False
+        while not exit:
+            reads, writes, exes = select.select(sdts, [], [])
+            for sdt in reads:
+                line = sdt.read_line()
+                if line == None:
+                    print("Error reading '{}', disconnecting".format(sdt.format_line("{}: {}".format(sdt.path, sdt.alias))))
+                    sdts.remove(sdt)
+                    if len(sdts) == 0:
+                        exit = True
+                else:
+                    print(sdt.format_line(line))
+    except KeyboardInterrupt:
+        print("")
 
