@@ -41,7 +41,11 @@ class SDT(serial.Serial):
         self.number = number
         self.color = config['color']
         self.endl = bytes(config['endl'], 'utf-8')
-        self.alias = config['alias']
+
+        try:
+            self.alias = config['alias']
+        except KeyError:
+            self.alias = self.path
 
     def format_line(self, message):
         return "{}: {}".format(self.number, colored(self.color, (message)))
@@ -77,7 +81,7 @@ if __name__ == '__main__':
         try:
             sdt = SDT(d_path, n, d_config)
             sdts.append(sdt)
-            print(sdt.format_line("{}: {}".format(sdt.path, sdt.alias)))
+            print(sdt.format_line(sdt.alias))
         except termios.error as e:
             print("{}: error: {}".format(d_path, e))
         except SDTException as e:
@@ -93,7 +97,7 @@ if __name__ == '__main__':
             for sdt in reads:
                 line = sdt.read_line()
                 if line == None:
-                    print("Error reading '{}', disconnecting".format(sdt.format_line("{}: {}".format(sdt.path, sdt.alias))))
+                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.alias)))
                     sdts.remove(sdt)
                     if len(sdts) == 0:
                         exit = True
