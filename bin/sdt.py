@@ -1,279 +1,89 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-import glob, threading, time, Queue, sys, re, termios, os, errno
+import sys, serial, yaml, termios, select
 
-try:
-    import serial
-except ImportError as e:
-    print "ERROR:", e, "... Try `pip install pyserial`."
-    sys.exit()
+def error(message):
+    print("Error:", message)
+    sys.exit(1)
 
-try:
-    import yaml
-except ImportError as e:
-    print "ERROR:", e, "... Try `pip install PyYAML`."
-    sys.exit()
+def colored(color, message):
+    colors = {
+        'reset':    '\033[0m',
+        'white':    '\033[39m',
+        'red':      '\033[31m',
+        'green':    '\033[32m',
+        'yellow':   '\033[33m',
+        'blue':     '\033[34m',
+        'pink':     '\033[35m',
+        'cyan':     '\033[36m',
+    }
 
-CONFIG_DEFAULT = """
-# Path patterns to search for devices
-paths: [ /dev/tty.* ]
-
-# Bauds available for manual setting during run-time
-bauds: [ 230400, 115200, 57600, 38400, 9600 ]
-
-# Colors to use for printing device output
-colors: [ 32, 33, 34, 35, 31, 36, 37 ]
-
-# Highlight colors
-#
-# Each line is assumed to start with a tag word. If that word matches an entry here, then the line prefix will be highlighted accordingly
-highlight:
-    'ERROR': '30;41'
-    'TODO':  '30;43'
-
-# Specify default configurations for specific devices when opened. All fields are optional.
-#
-# Fields:
-#
-#   baud:   <rate>
-#   parity: <none|even|odd>
-#
-# Example:
-#
-#   devices:
-#       '/dev/tty.usbserial-FT90AXRO':
-#           baud: 3000000
-#           parity: even
-devices:
-"""
+    return colors[color] + message + colors['reset']
 
 class SDTException(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return str(self.value)
+    pass
 
-class Tty_Thread(threading.Thread):
-    def __init__(self, q, path, num, color, baud, parity):
-        super(Tty_Thread, self).__init__()
-        self._stop = threading.Event()
-        self.q = q
-        self.path = path
-        self.num = num
-        self.color = color
-        self.baud = baud
+class SDT(serial.Serial):
+    def __init__(self, path, number, config):
+        translate_parity = {
+            'none': serial.PARITY_NONE,
+            'even': serial.PARITY_EVEN,
+            'odd':  serial.PARITY_ODD,
+        }
 
-        if parity == 'none':
-            self.parity = serial.PARITY_NONE
-        elif parity == 'even':
-            self.parity = serial.PARITY_EVEN
-        elif parity == 'odd':
-            self.parity = serial.PARITY_ODD
-        else:
-            raise SDTException('invalid parity')
-
-    def __send_line(self, line, log=True):
-        if log == True:
-            color = self.color
-        else:
-            color = 0
-
-        self.q.put((self.num, color, line))
-
-    def run(self):
-        with serial.Serial(self.path, self.baud, timeout=0.05, parity=self.parity) as self.device:
-            buf = ""
-            line_time = time.time()
-
-            while not self._stop.isSet():
-                try:
-                    chunk = self.device.read(256)
-                except serial.SerialException as e:
-                    self.__send_line(str(e), log=False)
-                    return
-
-                read_time = time.time()
-                timeout = ((read_time - line_time) > 1.0)
-
-                buf += chunk
-                if len(buf) == 0:
-                    continue
-
-                lines = re.split('\n\r|\r\n|\r|\n', buf)
-
-                if timeout:
-                    complete_lines = lines
-                    buf = ''
-                else:
-                    complete_lines = lines[:-1]
-                    buf = lines[-1]
-
-                if len(complete_lines) > 0:
-                    line_time = read_time
-                    for line in complete_lines:
-                        self.__send_line(line)
-
-    def stop(self):
-        self._stop.set()
-
-    def setbaud(self, baud):
         try:
-            self.device.baudrate = baud
-            self.baud = baud
-            self.__send_line("baud: %d" % baud, log=False)
-        except AttributeError as e:
-            self.__send_line("Setting baud failed, try again: " + str(e), log=False)
+            parity = translate_parity[config['parity']]
+        except KeyError:
+            raise SDTException("invalid parity '{}'".format(config['parity']))
 
-class Input_Thread(threading.Thread):
-    def __init__(self, q):
-        super(Input_Thread, self).__init__()
-        self._stop = threading.Event()
-        self.q = q
+        super().__init__(path, config['baud'], timeout=config['timeout'], parity=parity)
+        self.path = path
+        self.number = number
+        self.color = config['color']
+        self.endl = bytes(config['endl'], 'utf-8')
+        self.alias = config['alias']
 
-    def run(self):
-        # switch stdin to raw input mode to allow detecting key presses
-        stdin = sys.stdin.fileno()
+    def print_line(self, message):
+        print("{}: {}".format(self.number, colored(self.color, (message))))
 
-        oldterm = termios.tcgetattr(stdin)
-        newattr = termios.tcgetattr(stdin)
-        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO & ~termios.ISIG
-        termios.tcsetattr(stdin, termios.TCSANOW, newattr)
-
-        while not self._stop.isSet():
-            c = sys.stdin.read(1)
-            self.q.put(c)
-            if c == '\x03':
-                break
-
-        # switch back
-        termios.tcsetattr(stdin, termios.TCSAFLUSH, oldterm)
-
-    def stop(self):
-        self._stop.set()
+    def read_line(self):
+        return self.read_until(self.endl).decode('utf-8', errors='replace').rstrip()
 
 if __name__ == '__main__':
-    while True:
-        conf_fname = os.environ['HOME'] + "/.sdt/config.yaml"
-        try:
-            config = yaml.safe_load(open(conf_fname))
-            break
-        except IOError:
-            os.makedirs(os.path.dirname(conf_fname))
-            with open(conf_fname, 'w') as conf_file:
-                conf_file.write(CONFIG_DEFAULT)
-        except (yaml.parser.ParserError, yaml.scanner.ScannerError) as e:
-            print "ERROR loading config file '%s':" % (conf_fname)
-            print e
-            sys.exit(0)
-
-
-    # use a set instead of a list to easily avoid duplicate paths
-    paths = set()
-    for path in config['paths']:
-        paths |= set(glob.glob(path))
-
-    for path in config['paths_blacklist']:
-        paths -= set(glob.glob(path))
-
-    if len(paths) < 1:
-        print "No devices found."
-        sys.exit(0)
-
-    q = Queue.Queue()
-    tty_threads = []
-
-    # message to prompt help banner on startup
-    q.put('h')
-
-    input_thread = Input_Thread(q)
-    input_thread.start()
-
-    # launch threads to handle each tty
-    for path in paths:
-        n = len(tty_threads)
-        color = config['colors'][n % len(config['colors'])]
-
-        try:
-            baud = config['devices'][path]['baud']
-        except (KeyError, TypeError):
-            baud = config['bauds'][0]
-
-        try:
-            parity = config['devices'][path]['parity']
-        except (KeyError, TypeError):
-            parity = 'none'
-
-        thread = Tty_Thread(q, path, n, color, baud, parity)
-        tty_threads.append(thread)
-        thread.start()
-
-    current_thread = 0
-
-    log_fname = os.environ['HOME'] + time.strftime("/.sdt/log/sdt_%Y-%m-%d_%H%Mh.log")
-    print "Logging to '%s'" % log_fname
     try:
-        os.makedirs(os.path.dirname(log_fname))
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    with open(log_fname, 'a') as log_file:
+        conf_fname = sys.argv[1]
+    except IndexError:
+        conf_fname = 'sdt.yaml'
+
+    try:
+        config = yaml.safe_load(open(conf_fname))
+    except IOError as e:
+        error("failed opening config:" + str(e))
+
+    n = 0
+    sdts = []
+    for d_path in config['devices']:
+        d_config = config['defaults'].copy()
         try:
-            while True:
-                # handle messages from other threads
-                msg = q.get()
+            d_config.update(config['devices'][d_path])
+        except TypeError:
+            # empty config
+            pass
 
-                # handle key commands
-                if isinstance(msg, str):
-                    if msg == 't':
-                        current_thread = (current_thread + 1) % len(tty_threads)
-                        print "current tty: %d" % current_thread
-                    elif msg == 'b':
-                        tty = tty_threads[current_thread]
-                        try:
-                            i = config['bauds'].index(tty.baud)
-                            i = (i + 1) % len(config['bauds'])
-                        except ValueError:
-                            i = 0
-                        tty.setbaud(config['bauds'][i])
-                    elif msg == 'd':
-                        divider = time.strftime("------------------------------  %Y-%m-%d -- %H:%M:%S  ------------------------------")
-                        print divider
-                        log_file.write(divider + "\n")
-                        log_file.flush()
-                    elif msg == 'h':
-                        print ""
-                        print "    h\tShow help."
-                        print "    t\tSwitch current TTY."
-                        print "    b\tChange baud rate for current TTY."
-                        print "    d\tPrint a horizontal divider."
-                        print "\n    TTY\tBaud\tDevice"
-                        for thread in tty_threads:
-                            if thread.num == current_thread:
-                                indent = "  ->"
-                            else:
-                                indent = "    "
-                            print "%s%d\t%d\t\033[%dm%s\033[0m" % (indent, thread.num, thread.baud, thread.color, thread.path)
-                        print ""
-                    elif msg in ['q', chr(3), chr(4)]:
-                        break
+        try:
+            sdt = SDT(d_path, n, d_config)
+            sdts.append(sdt)
+            sdt.print_line("{}: {}".format(sdt.path, sdt.alias))
+        except termios.error as e:
+            print("{}: error: {}".format(d_path, e))
+        except SDTException as e:
+            print("{}: error: {}".format(d_path, e))
 
-                # handle prints
-                elif isinstance(msg, tuple):
-                    num, color, text = msg
-                    if color == 0:
-                        print "-%d- %s" % (num, text)
-                    else:
-                        match = re.match('(\w+)', text)
-                        try:
-                            tag_color = config['highlight'][match.group(1)]
-                        except:
-                            tag_color = '97;40'
-                        print "\033[%sm[%d]\033[0m \033[%dm%s\033[0m" % (tag_color, num, color, text)
-                        log_file.write("[%d] %s\n" % (num, text))
-                        log_file.flush()
+        n += 1
 
-        finally:
-            print "Log written to '%s'" % log_fname
-            threads = tty_threads + [input_thread]
-            for thread in threads: thread.stop()
-            for thread in threads: thread.join()
+    print("")
+    while True:
+        reads, writes, exes = select.select(sdts, [], [])
+        for sdt in reads:
+            sdt.print_line(sdt.read_line())
+
