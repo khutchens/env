@@ -43,11 +43,15 @@ class SDT(serial.Serial):
         self.endl = bytes(config['endl'], 'utf-8')
         self.alias = config['alias']
 
-    def print_line(self, message):
-        print("{}: {}".format(self.number, colored(self.color, (message))))
+    def format_line(self, message):
+        return "{}: {}".format(self.number, colored(self.color, (message)))
 
     def read_line(self):
-        return self.read_until(self.endl).decode('utf-8', errors='replace').rstrip()
+        line = self.read_until(self.endl).decode('utf-8', errors='replace')
+        if len(line) == 0:
+            return None
+        else:
+            return line.rstrip()
 
 if __name__ == '__main__':
     try:
@@ -73,7 +77,7 @@ if __name__ == '__main__':
         try:
             sdt = SDT(d_path, n, d_config)
             sdts.append(sdt)
-            sdt.print_line("{}: {}".format(sdt.path, sdt.alias))
+            print(sdt.format_line("{}: {}".format(sdt.path, sdt.alias)))
         except termios.error as e:
             print("{}: error: {}".format(d_path, e))
         except SDTException as e:
@@ -82,8 +86,16 @@ if __name__ == '__main__':
         n += 1
 
     print("")
-    while True:
+    exit = False
+    while not exit:
         reads, writes, exes = select.select(sdts, [], [])
         for sdt in reads:
-            sdt.print_line(sdt.read_line())
+            line = sdt.read_line()
+            if line == None:
+                print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.path)))
+                sdts.remove(sdt)
+                if len(sdts) == 0:
+                    exit = True
+            else:
+                print(sdt.format_line(line))
 
