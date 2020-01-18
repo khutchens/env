@@ -6,40 +6,39 @@ def error(message):
     print("Error:", message)
     sys.exit(1)
 
-def colored(color, message):
-    colors = {
-        'reset':    '\033[0m',
-        'white':    '\033[39m',
-        'red':      '\033[31m',
-        'green':    '\033[32m',
-        'yellow':   '\033[33m',
-        'blue':     '\033[34m',
-        'pink':     '\033[35m',
-        'cyan':     '\033[36m',
-    }
-
-    return colors[color] + message + colors['reset']
-
 class SDTException(Exception):
     pass
 
 class SDT(serial.Serial):
     def __init__(self, path, number, config):
-        translate_parity = {
-            'none': serial.PARITY_NONE,
-            'even': serial.PARITY_EVEN,
-            'odd':  serial.PARITY_ODD,
-        }
-
         try:
+            translate_parity = {
+                'none': serial.PARITY_NONE,
+                'even': serial.PARITY_EVEN,
+                'odd':  serial.PARITY_ODD,
+            }
             parity = translate_parity[config['parity']]
         except KeyError:
             raise SDTException("invalid parity '{}'".format(config['parity']))
 
         super().__init__(path, config['baud'], timeout=config['timeout'], parity=parity)
+
+        try:
+            translate_color = {
+                'white':    '\033[39m',
+                'red':      '\033[31m',
+                'green':    '\033[32m',
+                'yellow':   '\033[33m',
+                'blue':     '\033[34m',
+                'pink':     '\033[35m',
+                'cyan':     '\033[36m',
+            }
+            self.color = translate_color[config['color']]
+        except KeyError:
+            raise SDTException("invalid color '{}'".format(config['color']))
+
         self.path = path
         self.number = number
-        self.color = config['color']
         self.endl = bytes(config['endl'], 'utf-8')
 
         try:
@@ -48,7 +47,7 @@ class SDT(serial.Serial):
             self.alias = self.path
 
     def format_line(self, message):
-        return "{}: {}".format(self.number, colored(self.color, (message)))
+        return "{}: {}".format(self.number, self.color + message + '\033[0m')
 
     def read_line(self):
         line = self.read_until(self.endl).decode('utf-8', errors='replace')
