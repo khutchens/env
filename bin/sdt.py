@@ -92,7 +92,6 @@ if __name__ == '__main__':
             config = yaml.safe_load(conf_file)
     except IOError as e:
         error("failed opening '{}': {}".format(args.config, str(e)))
-    print(config)
 
     n = 0
     sdts = []
