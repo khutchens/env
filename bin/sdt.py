@@ -10,7 +10,7 @@ class SDTException(Exception):
     pass
 
 class SDT(serial.Serial):
-    def __init__(self, path, number, config):
+    def __init__(self, path, config):
         try:
             translate_parity = {
                 'none': serial.PARITY_NONE,
@@ -21,7 +21,10 @@ class SDT(serial.Serial):
         except KeyError:
             raise SDTException("invalid parity '{}'".format(config['parity']))
 
-        super().__init__(path, config['baud'], timeout=config['timeout'], parity=parity)
+        try:
+            super().__init__(path, config['baud'], timeout=config['timeout'], parity=parity)
+        except serial.SerialException as e:
+            raise SDTException(e)
 
         try:
             translate_color = {
@@ -38,7 +41,6 @@ class SDT(serial.Serial):
             raise SDTException("invalid color '{}'".format(config['color']))
 
         self.path = path
-        self.number = number
         self.endl = config['endl'].encode('utf-8').decode('unicode_escape').encode('utf-8')
 
         try:
@@ -47,7 +49,7 @@ class SDT(serial.Serial):
             self.name = self.path
 
     def format_line(self, message):
-        return "{}: {}".format(self.number, self.color + message + '\033[0m')
+        return "{}: {}".format(self.name, self.color + message + '\033[0m')
 
     def read_line(self):
         line = self.read_until(self.endl).decode('utf-8', errors='replace')
@@ -93,7 +95,6 @@ if __name__ == '__main__':
     except IOError as e:
         error("failed opening '{}': {}".format(args.config, str(e)))
 
-    n = 0
     sdts = []
     for d_path in config['devices']:
         d_config = config['defaults'].copy()
@@ -104,15 +105,13 @@ if __name__ == '__main__':
             pass
 
         try:
-            sdt = SDT(d_path, n, d_config)
+            sdt = SDT(d_path, d_config)
             sdts.append(sdt)
-            print(sdt.format_line(sdt.name))
+            print(sdt.format_line(d_path))
         except termios.error as e:
             print("{}: error: {}".format(d_path, e))
         except SDTException as e:
             print("{}: error: {}".format(d_path, e))
-
-        n += 1
 
     print("-----")
     try:
@@ -120,14 +119,23 @@ if __name__ == '__main__':
         while not exit:
             reads, writes, exes = select.select(sdts, [], [])
             for sdt in reads:
-                line = sdt.read_line()
-                if line == None:
-                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.name)))
+                if len(sdts) == 0:
+                    exit = True
+
+                try:
+                    line = sdt.read_line()
+                except serial.SerialException as e:
+                    print("Error reading '{}', disconnecting [{}]".format(sdt.format_line(sdt.path), e))
                     sdts.remove(sdt)
-                    if len(sdts) == 0:
-                        exit = True
-                else:
-                    print(sdt.format_line(line))
+                    continue
+
+                if line == None:
+                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.path)))
+                    sdts.remove(sdt)
+                    continue
+
+                print(sdt.format_line(line))
+
     except KeyboardInterrupt:
         print("")
 
