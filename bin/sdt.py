@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, serial, yaml, termios, select
+import sys, serial, yaml, termios, select, glob, argparse, os
 
 def error(message):
     print("Error:", message)
@@ -39,12 +39,12 @@ class SDT(serial.Serial):
 
         self.path = path
         self.number = number
-        self.endl = bytes(config['endl'], 'utf-8')
+        self.endl = config['endl'].encode('utf-8').decode('unicode_escape').encode('utf-8')
 
         try:
-            self.alias = config['alias']
+            self.name = config['name']
         except KeyError:
-            self.alias = self.path
+            self.name = self.path
 
     def format_line(self, message):
         return "{}: {}".format(self.number, self.color + message + '\033[0m')
@@ -57,15 +57,42 @@ class SDT(serial.Serial):
             return line.rstrip()
 
 if __name__ == '__main__':
-    try:
-        conf_fname = sys.argv[1]
-    except IndexError:
-        conf_fname = 'sdt.yaml'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', metavar='CONF_FILE', default='sdt_conf.yaml')
+    parser.add_argument('-g', '--gen-config', default=False, action='store_true')
+    args = parser.parse_args()
+
+    if args.gen_config:
+        config = {
+                'defaults': {
+                'baud':     230400,
+                'parity':   'none',
+                'color':    'white',
+                'endl':     '\\r\\n',
+                'timeout':  0.1,
+            },
+            'devices':  {},
+        }
+
+        paths = glob.glob('/dev/tty??*')
+        for path in paths:
+            try:
+                tty = serial.Serial(path, 230400)
+                tty.close()
+            except serial.SerialException:
+                continue
+            config['devices'][path] = {'name': os.path.basename(path)}
+
+        with open(args.config, 'w') as conf_file:
+            conf_file.write(yaml.dump(config, default_flow_style=False, indent=4))
+        sys.exit(0)
 
     try:
-        config = yaml.safe_load(open(conf_fname))
+        with open(args.config, 'r') as conf_file:
+            config = yaml.safe_load(conf_file)
     except IOError as e:
-        error("failed opening config:" + str(e))
+        error("failed opening '{}': {}".format(args.config, str(e)))
+    print(config)
 
     n = 0
     sdts = []
@@ -80,7 +107,7 @@ if __name__ == '__main__':
         try:
             sdt = SDT(d_path, n, d_config)
             sdts.append(sdt)
-            print(sdt.format_line(sdt.alias))
+            print(sdt.format_line(sdt.name))
         except termios.error as e:
             print("{}: error: {}".format(d_path, e))
         except SDTException as e:
@@ -88,7 +115,7 @@ if __name__ == '__main__':
 
         n += 1
 
-    print("")
+    print("-----")
     try:
         exit = False
         while not exit:
@@ -96,7 +123,7 @@ if __name__ == '__main__':
             for sdt in reads:
                 line = sdt.read_line()
                 if line == None:
-                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.alias)))
+                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.name)))
                     sdts.remove(sdt)
                     if len(sdts) == 0:
                         exit = True
