@@ -40,6 +40,11 @@ nnoremap <leader>wq :w<CR>:bdelete<CR>
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
 
+" simple number base conversion
+nnoremap <silent> <leader>ch diw:let @" = printf("0x%x", @")<CR>p
+nnoremap <silent> <leader>cd diw:let @" = printf("%d", @")<CR>p
+nnoremap <silent> <leader>cb diw:let @" = printf("0b%b", @")<CR>p
+
 " remap :tag to :tjump, which prompts for selection when duplicate tags exist
 nnoremap <C-]> g<C-]>
 
