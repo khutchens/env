@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, serial, yaml, termios, select, glob, argparse, os
+import sys, serial, yaml, termios, select, glob, argparse, os, time
 
 def error(message):
     print("Error:", message)
@@ -48,8 +48,13 @@ class SDT(serial.Serial):
         except KeyError:
             self.name = self.path
 
-    def format_line(self, message):
-        return "{}: {}".format(self.name, self.color + message + '\033[0m')
+        self.start_time = time.time()
+
+    def format_line(self, message, timestamp=False):
+        output = "{}: {}".format(self.name, self.color + message + '\033[0m')
+        if timestamp:
+            output = "\033[37m{:.3f}\033[0m ".format(time.time() - self.start_time) + output
+        return output
 
     def read_line(self):
         line = self.read_until(self.endl).decode('utf-8', errors='replace')
@@ -62,6 +67,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', metavar='CONF_FILE', default='sdt_conf.yaml')
     parser.add_argument('-g', '--gen-config', default=False, action='store_true')
+    parser.add_argument('-t', '--timestamps', default=False, action='store_true')
     args = parser.parse_args()
 
     if args.gen_config:
@@ -134,7 +140,7 @@ if __name__ == '__main__':
                     sdts.remove(sdt)
                     continue
 
-                print(sdt.format_line(line))
+                print(sdt.format_line(line, args.timestamps))
 
     except KeyboardInterrupt:
         print("")
