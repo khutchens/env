@@ -40,6 +40,11 @@ nnoremap <leader>wq :w<CR>:bdelete<CR>
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
 
+" quickfix
+nnoremap <leader>el :cf<CR>
+nnoremap <leader>ee :cn<CR>
+nnoremap <leader>E :cN<CR>
+
 " simple number base conversion
 nnoremap <silent> <leader>ch diw:let @" = printf("0x%x", @")<CR>p
 nnoremap <silent> <leader>cd diw:let @" = printf("%d", @")<CR>p
