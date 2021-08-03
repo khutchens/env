@@ -50,6 +50,13 @@ nnoremap <silent> <leader>ch diw:let @" = printf("0x%x", @")<CR>p
 nnoremap <silent> <leader>cd diw:let @" = printf("%d", @")<CR>p
 nnoremap <silent> <leader>cb diw:let @" = printf("0b%b", @")<CR>p
 
+" clang-format current buffer
+nnoremap <silent> <leader>ss :%call ClangFormat()<CR>
+xnoremap <silent> <leader>s :call ClangFormat()<CR>
+function ClangFormat() range
+    execute(a:firstline . ',' . a:lastline . ' !clang-format -style=file')
+endfunction
+
 " remap :tag to :tjump, which prompts for selection when duplicate tags exist
 nnoremap <C-]> g<C-]>
 
