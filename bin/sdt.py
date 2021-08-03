@@ -1,67 +1,80 @@
 #!/usr/bin/env python3
 
-import sys, serial, yaml, termios, select, glob, argparse, os, time
+import argparse, re, select, serial, socket, yaml
 
-def error(message):
-    print("Error:", message)
-    sys.exit(1)
+class InputDeviceError(Exception): pass
+class NoDeviceError(InputDeviceError): pass
+class ConfigParseError(InputDeviceError): pass
 
-class SDTException(Exception):
-    pass
+class InputDevice:
+    def __init__(self, name, config):
+        self.name = name
 
-class SDT(serial.Serial):
-    def __init__(self, path, config):
+        self.highlight = {}
+        try:
+            for pattern, sub in config['highlight'].items():
+                self.highlight[re.compile(pattern)] = sub
+        except KeyError:
+            pass
+
+    def __str__(self):
+        return f'{self.name}: {self.label}'
+
+    def _detect_type(self, config, key):
+        try:
+            setattr(self, key, config[key])
+        except KeyError:
+            raise NoDeviceError
+
+    def _init_configs(self, config, keys):
+        for key in keys:
+            try:
+                setattr(self, key, config[key])
+            except KeyError:
+                raise ConfigParseError(f'Missing config key: {key}')
+
+    def read_lines(self):
+        lines = self._read_lines_raw().splitlines()
+        for pattern in self.highlight:
+            lines = [re.sub(pattern, self.highlight[pattern], line) for line in lines]
+        lines = [f'{self.name}: {line}' for line in lines]
+        return lines
+
+class SerialInputDevice(InputDevice):
+    def __init__(self, name, config):
+        super().__init__(name, config)
+        self._detect_type(config, 'tty_path')
+        self._init_configs(config, ['baud', 'parity', 'endline', 'timeout_s'])
+        self.label = f'Serial TTY, {self.tty_path}'
+
         try:
             translate_parity = {
                 'none': serial.PARITY_NONE,
                 'even': serial.PARITY_EVEN,
                 'odd':  serial.PARITY_ODD,
             }
-            parity = translate_parity[config['parity']]
+            self.parity = translate_parity[self.parity]
         except KeyError:
-            raise SDTException("invalid parity '{}'".format(config['parity']))
+            raise ConfigParseError("Invalid parity value: {}, expected one of: {}".format(self.parity, ', '.join(translate_parity.keys())))
 
         try:
-            super().__init__(path, config['baud'], timeout=config['timeout'], parity=parity)
+            self.serial_device = serial.Serial(self.tty_path, self.baud, timeout=self.timeout_s, parity=self.parity)
         except serial.SerialException as e:
-            raise SDTException(e)
+            raise InputDeviceError(e)
+        except termios.error as e:
+            raise InputDeviceError(e)
 
-        try:
-            translate_color = {
-                'white':    '\033[39m',
-                'red':      '\033[31m',
-                'green':    '\033[32m',
-                'yellow':   '\033[33m',
-                'blue':     '\033[34m',
-                'pink':     '\033[35m',
-                'cyan':     '\033[36m',
-            }
-            self.color = translate_color[config['color']]
-        except KeyError:
-            raise SDTException("invalid color '{}'".format(config['color']))
+    def _read_lines_raw(self):
+        return self.serial_device.read_until(self.endline).decode('utf-8', errors='replace')
 
-        self.path = path
-        self.endl = config['endl'].encode('utf-8').decode('unicode_escape').encode('utf-8')
+    def fileno(self):
+        return self.serial_device.fileno()
 
-        try:
-            self.name = config['name']
-        except KeyError:
-            self.name = self.path
-
-        self.start_time = time.time()
-
-    def format_line(self, message, timestamp=False):
-        output = "{}: {}".format(self.name, self.color + message + '\033[0m')
-        if timestamp:
-            output = "\033[37m{:.3f}\033[0m ".format(time.time() - self.start_time) + output
-        return output
-
-    def read_line(self):
-        line = self.read_until(self.endl).decode('utf-8', errors='replace')
-        if len(line) == 0:
-            return None
-        else:
-            return line.rstrip()
+class SocketInputDevice(InputDevice):
+    def __init__(self, name, config):
+        super().__init__(name, config)
+        self._detect_type(config, 'tcp_port')
+        raise NotImplementedError('TCP sockets not implemented yet')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -70,78 +83,48 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--timestamps', default=False, action='store_true')
     args = parser.parse_args()
 
-    if args.gen_config:
-        config = {
-                'defaults': {
-                'baud':     230400,
-                'parity':   'none',
-                'color':    'white',
-                'endl':     '\\r\\n',
-                'timeout':  0.1,
-            },
-            'devices':  {},
-        }
-
-        paths = glob.glob('/dev/tty??*')
-        for path in paths:
-            try:
-                tty = serial.Serial(path, 230400)
-                tty.close()
-            except serial.SerialException:
-                continue
-            config['devices'][path] = {'name': os.path.basename(path)}
-
-        with open(args.config, 'w') as conf_file:
-            conf_file.write(yaml.dump(config, default_flow_style=False, indent=4))
-        sys.exit(0)
-
+    # Read config file
     try:
         with open(args.config, 'r') as conf_file:
             config = yaml.safe_load(conf_file)
     except IOError as e:
-        error("failed opening '{}': {}".format(args.config, str(e)))
+        error("Failed opening '{}': {}".format(args.config, str(e)))
 
-    sdts = []
-    for d_path in config['devices']:
-        d_config = config['defaults'].copy()
-        try:
-            d_config.update(config['devices'][d_path])
-        except TypeError:
-            # empty config
-            pass
+    devices = []
+    dev_confs = config['devices']
 
-        try:
-            sdt = SDT(d_path, d_config)
-            sdts.append(sdt)
-            print(sdt.format_line(d_path))
-        except termios.error as e:
-            print("{}: error: {}".format(d_path, e))
-        except SDTException as e:
-            print("{}: error: {}".format(d_path, e))
+    # Initialize devices
+    for dev_name in dev_confs:
+        dev = None
+        dev_conf = dev_confs[dev_name]
 
+        for dev_type in [SerialInputDevice, SocketInputDevice]:
+            try:
+                dev = dev_type(dev_name, dev_conf)
+            except NoDeviceError:
+                pass
+            except ConfigParseError as e:
+                print(f'Failed parsing config for \'{dev_name}\': {e}')
+            except InputDeviceError as e:
+                print(f'Failed opening device \'{dev_name}\': {e}')
+
+            if dev != None:
+                break
+
+        if dev == None:
+            print(f'Failed initializing \'{dev_name}\'')
+        else:
+            devices.append(dev)
+
+    # Read input devices
+    for d in devices:
+        print(d)
     print("-----")
     try:
-        exit = False
-        while not exit:
-            reads, writes, exes = select.select(sdts, [], [])
-            for sdt in reads:
-                if len(sdts) == 0:
-                    exit = True
-
-                try:
-                    line = sdt.read_line()
-                except serial.SerialException as e:
-                    print("Error reading '{}', disconnecting [{}]".format(sdt.format_line(sdt.path), e))
-                    sdts.remove(sdt)
-                    continue
-
-                if line == None:
-                    print("Error reading '{}', disconnecting".format(sdt.format_line(sdt.path)))
-                    sdts.remove(sdt)
-                    continue
-
-                print(sdt.format_line(line, args.timestamps))
-
+        while True:
+            reads, writes, exes = select.select(devices, [], [])
+            for r in reads:
+                for line in r.read_lines():
+                    print(line)
     except KeyboardInterrupt:
         print("")
-
