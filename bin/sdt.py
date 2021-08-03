@@ -33,18 +33,18 @@ class InputDevice:
             except KeyError:
                 raise ConfigParseError(f'Missing config key: {key}')
 
-    def read_lines(self):
-        lines = self._read_lines_raw().splitlines()
-        for pattern in self.highlight:
-            lines = [re.sub(pattern, self.highlight[pattern], line) for line in lines]
-        lines = [f'{self.name}: {line}' for line in lines]
-        return lines
+    def read_line(self):
+        line = self._read_line_raw()
+        for pattern, sub in self.highlight.items():
+            line = re.sub(pattern, sub, line)
+        return f'{self.name}: {line}'
 
 class SerialInputDevice(InputDevice):
     def __init__(self, name, config):
         super().__init__(name, config)
         self._detect_type(config, 'tty_path')
         self._init_configs(config, ['baud', 'parity', 'endline', 'timeout_s'])
+        self.endline = self.endline.encode('utf-8').decode('unicode_escape').encode('utf-8')
         self.label = f'Serial TTY, {self.tty_path}'
 
         try:
@@ -64,8 +64,8 @@ class SerialInputDevice(InputDevice):
         except termios.error as e:
             raise InputDeviceError(e)
 
-    def _read_lines_raw(self):
-        return self.serial_device.read_until(self.endline).decode('utf-8', errors='replace')
+    def _read_line_raw(self):
+        return self.serial_device.read_until(self.endline).rstrip(self.endline).decode('utf-8', errors='replace')
 
     def fileno(self):
         return self.serial_device.fileno()
@@ -124,7 +124,6 @@ if __name__ == '__main__':
         while True:
             reads, writes, exes = select.select(devices, [], [])
             for r in reads:
-                for line in r.read_lines():
-                    print(line)
+                print(r.read_line())
     except KeyboardInterrupt:
         print("")
