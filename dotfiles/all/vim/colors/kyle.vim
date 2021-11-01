@@ -21,6 +21,9 @@ hi  Special     ctermfg=3           cterm=none
 
 hi  CommentBright ctermfg=DarkCyan cterm=none
 
+hi  Pass        ctermfg=DarkGreen
+hi  Fail        ctermfg=DarkRed
+
 " Copied from standard colors for quick modification
 "hi SpecialKey     term=bold cterm=bold ctermfg=4 guifg=Cyan
 "hi NonText        term=bold ctermfg=4 gui=bold guifg=#2e69c1

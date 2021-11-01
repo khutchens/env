@@ -1,7 +1,8 @@
 # vim: syntax=gdb
 
 # cortex-m hardfault backtrace
-define hookpost-backtrace
+#define hookpost-backtrace
+define fault_backtrace
     if (($lr & 0xffffff00) == 0xffffff00) && (($lr & 0x1) == 0x1)
         # cache register values so they can be restored
         set $sp_cache = $sp
@@ -47,18 +48,25 @@ define hookpost-backtrace
     end
 end
 
-define fault_cm7
-    set $fs=(uint32_t*)$r0
-    set $fse=(uint32_t*)$r1
+define fault_cm
+    if $lr & 0x4
+        set $fs=(uint32_t*)$psp
+    else
+        set $fs=(uint32_t*)$msp
+    end
+
     printf "Pre-fault state(frame: 0x%08x):\n", $fs
-    printf "R0 = 0x%08x, R1 = 0x%08x, R2 = 0x%08x, R3 = 0x%08x\n", $fs[0], $fs[1], $fs[2], $fs[3]
-    printf "R4 = 0x%08x, R5 = 0x%08x, R6 = 0x%08x, R7 = 0x%08x\n", $fse[0], $fse[1], $fse[2], $fse[3]
-    printf "R8 = 0x%08x, R9 = 0x%08x, R10= 0x%08x, R11= 0x%08x\n", $fse[4], $fse[5], $fse[6], $fse[7]
-    printf "R12= 0x%08x\n\n", $fs[4]
-    printf "LR  = 0x%08x\n", $fs[5]
-    printf "PC  = 0x%08x\n", $fs[6]
-    printf "xPSR= 0x%08x\n", $fs[7]
-    printf "E   = 0x%08x\n", $fse[8]
+    printf "R0:   %08x\n", $fs[0]
+    printf "R1:   %08x\n", $fs[1]
+    printf "R2:   %08x\n", $fs[2]
+    printf "R3:   %08x\n", $fs[3]
+    printf "R12:  %08x\n\n", $fs[4]
+
+    printf "LR:   %08x\n", $fs[5]
+    printf "PC:   %08x\n", $fs[6]
+    printf "xPSR: %08x\n\n", $fs[7]
+
+    printf "PC line: "
     info line *(void*)$fs[6]
     printf "\n"
 
@@ -177,14 +185,6 @@ define fault_cm7
             echo HardFault[VECTTBL]: Bus error on a vector read.\n
         end
     end
-end
 
-#define hook-stop
-#    set $cfsr = *(uint32_t*)0xe000ed28
-#    set $hfsr = *(uint32_t*)0xe000ed2c
-#
-#    if $cfsr || $hfsr
-#        fault_cm7
-#        echo \n
-#    end
-#end
+    fault_backtrace
+end

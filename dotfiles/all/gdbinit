@@ -29,3 +29,10 @@ set backtrace past-entry on
 set history save on
 
 source ~/.gdb/cortex_m.gdb
+
+set breakpoint pending on
+break z_arm_hard_fault
+set breakpoint pending auto
+
+#target remote localhost:1234
+#continue

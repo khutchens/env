@@ -23,6 +23,7 @@ set softtabstop=4
 
 " handle tabs correctly for makefiles
 au BufNewFile,BufRead makefile,Makefile,*.mk  setlocal noexpandtab shiftwidth=4 softtabstop=4
+au BufNewFile,BufRead *.conf,*_defconfig  set syntax=zephyr_conf
 
 " disable statusline for fzf windows
 autocmd FileType fzf set laststatus=0 noshowmode noruler

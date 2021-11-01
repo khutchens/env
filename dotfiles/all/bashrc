@@ -28,7 +28,7 @@ fi
 # ENV
 export EDITOR=vim
 export GREP_COLOR='31'
-export PATH=~/bin:$PATH
+export PATH=~/bin:~/go/bin:$PATH
 export FZF_DEFAULT_OPTS='-m'
 export PYTHONUNBUFFERED=1
 
