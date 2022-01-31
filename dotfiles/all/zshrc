@@ -1,0 +1,66 @@
+# Homebrew #####################################################################
+if (( ! $+commands[brew] )); then
+    echo Installing Hombrew...
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew tap tavianator/tap
+    brew install zsh fzf ag nvim tavianator/tap/bfs
+fi
+
+# zplug ########################################################################
+if [[ ! -d ~/.zplug ]]; then
+    echo Installing zplug...
+    git clone https://github.com/b4b4r07/zplug ~/.zplug
+fi
+source ~/.zplug/init.zsh
+
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+zplug 'khutchens/fzf-zsh', from:'github'
+FZF_ZSH__FIND_CMD='bfs'
+
+if ! zplug check; then
+    echo Installing zplug plugins...
+    zplug install
+fi
+zplug load
+
+# ZSH ##########################################################################
+
+# prompt
+export PROMPT='%F{blue}%1~%f %F{red}%#%f '
+export RPROMPT='%(?.%F{green}ok.%F{red}e:%?)%f'
+
+# history
+setopt HIST_IGNORE_ALL_DUPS  # do not put duplicated commands into history list
+setopt HIST_SAVE_NO_DUPS  # do not save duplicated commands
+setopt HIST_REDUCE_BLANKS  # remove unnecessary blanks
+setopt INC_APPEND_HISTORY_TIME  # append commands to history file immediately after execution
+setopt EXTENDED_HISTORY  # record command start time
+
+# ENV
+export EDITOR=nvim
+export PATH=~/bin:$PATH
+export PYTHONUNBUFFERED=1
+autoload -Uz compinit && compinit # enable auto-complete
+
+# Aliases ######################################################################
+
+alias fd=fzf_zsh__cd
+alias fdh=fzf_zsh__cd_history
+alias fdu=fzf_zsh__cd_upward
+alias fe=fzf_zsh__edit
+alias fh=fzf_zsh__exec_history
+alias fk=fzf_zsh__kill
+
+alias ll='ls -lh'
+alias la='ll -as'
+alias grep='grep --color=auto'
+
+alias vim='nvim'
+
+if [[ $(uname) == Darwin ]]; then
+    echo Loading Darwin configs...
+    alias ls='ls -FG'
+    alias cpwd='pwd | pbcopy'
+    alias vpwd='cd `pbpaste`'
+    export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
+fi
