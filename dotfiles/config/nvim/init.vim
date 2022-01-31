@@ -39,6 +39,7 @@ set number cursorline
 set wildmode=longest:list
 set expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set foldmethod=indent
+set foldlevelstart=3
 
 " easier buffer navigation
 nnoremap <Tab> :bnext<CR>
@@ -53,9 +54,6 @@ nnoremap <leader>E :cN<CR>
 
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
-"
-" remap :tag to :tjump, which prompts for selection when duplicate tags exist
-"nnoremap <C-]> g<C-]>
 
 " keep sign column open to avoid it coming and going during editing, which is
 " an LSP side effect.
