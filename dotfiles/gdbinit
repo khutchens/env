@@ -27,5 +27,3 @@ set backtrace past-entry on
 
 # save history to file so it persists between sessions
 set history save on
-
-source ~/.gdb/cortex_m.gdb
