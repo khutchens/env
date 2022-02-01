@@ -23,6 +23,9 @@ if ! zplug check; then
 fi
 zplug load
 
+# Rebuild command list after loading zplug commands
+hash -r
+
 # ZSH ##########################################################################
 
 # prompt
