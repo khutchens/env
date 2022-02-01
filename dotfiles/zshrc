@@ -61,16 +61,10 @@ alias fe=fzf_zsh__edit
 alias fh=fzf_zsh__exec_history
 alias fk=fzf_zsh__kill
 
+export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
+alias ls='ls -FG'
 alias ll='ls -lh'
 alias la='ll -as'
+
 alias grep='grep --color=auto'
-
 alias vim='nvim'
-
-if [[ $(uname) == Darwin ]]; then
-    echo Loading Darwin configs...
-    alias ls='ls -FG'
-    alias cpwd='pwd | pbcopy'
-    alias vpwd='cd `pbpaste`'
-    export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
-fi
