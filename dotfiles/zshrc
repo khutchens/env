@@ -14,8 +14,8 @@ fi
 source ~/.zplug/init.zsh
 
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-zplug 'khutchens/fzf-zsh', from:'github'
-FZF_ZSH__FIND_CMD='bfs'
+zplug 'khutchens/fzf-zsh'
+    FZF_ZSH__FIND_CMD='bfs'
 
 if ! zplug check; then
     echo Installing zplug plugins...
