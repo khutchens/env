@@ -38,7 +38,6 @@ setopt EXTENDED_HISTORY  # record command start time
 
 # ENV
 export EDITOR=nvim
-export PATH=~/bin:$PATH
 export PYTHONUNBUFFERED=1
 autoload -Uz compinit && compinit # enable auto-complete
 
