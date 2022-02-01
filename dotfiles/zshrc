@@ -46,7 +46,7 @@ export PYTHONUNBUFFERED=1
 autoload -Uz compinit && compinit # enable auto-complete
 
 # Prefer bfs for fzf
-if [ -x "$(command -v bfs)" ]; then
+if (( ! $+commands[bfs] )); then
     export FZF_DEFAULT_COMMAND='bfs -type f -follow -maxdepth 12 2> /dev/null'
 fi
 
