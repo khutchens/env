@@ -103,3 +103,8 @@ function Bufs()
 
 	return l:bufs
 endfunction
+
+" filetypes ********************************************************************
+
+au BufNewFile,BufRead *.openocd setf tcl
+au BufNewFile,BufRead *.expect setf expect
