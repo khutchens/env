@@ -86,9 +86,9 @@ endfunction
 
 " fzf **************************************************************************
 
-nnoremap <silent> <leader>fe :call fzf#run({'down': '30%', 'sink': 'edit'})<CR>
-nnoremap <silent> <leader>fb :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'buffer', 'options': '--no-multi'})<CR>
-nnoremap <silent> <leader>fq :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'bdelete'})<CR>
+nnoremap <silent> <leader>fe :call fzf#run({'down': '30%', 'sink': 'edit', 'options': '--multi'})<CR>
+nnoremap <silent> <leader>fb :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'buffer'})<CR>
+nnoremap <silent> <leader>fq :call fzf#run({'down': '30%', 'source': Bufs(), 'sink': 'bdelete', 'options': '--multi'})<CR>
 
 function Bufs()
 	" All buffer numbers.
