@@ -17,6 +17,7 @@ source ~/.zplug/init.zsh
 zplug 'khutchens/fzf-zsh'
     FZF_ZSH__FIND_CMD='bfs'
 zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
+zplug 'khutchens/mdserve', as:'command', use:'mdserve.py', rename-to:'mdserve'
 
 if ! zplug check; then
     echo "\033[36mInstalling plugins...\033[0m"
