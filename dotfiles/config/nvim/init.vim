@@ -74,6 +74,8 @@ nnoremap gf     :lua vim.lsp.buf.definition()<CR>
 nnoremap K      :lua vim.lsp.buf.hover()<CR>
 nnoremap gt     :lua vim.lsp.buf.type_definition()<CR>
 nnoremap gr     :lua vim.lsp.buf.references()<CR>
+nnoremap gp     :pop!<CR>
+nnoremap gP     :bdelete<CR>:pop!<CR>
 
 nnoremap g1     :lua vim.lsp.buf.incoming_calls()<CR>
 nnoremap g2     :lua vim.lsp.buf.outgoing_calls()<CR>
