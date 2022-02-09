@@ -11,6 +11,7 @@ call plug#end()
 " LSP configs ******************************************************************
 
 lua << EOF
+local util = require 'lspconfig.util'
 require('lspconfig').ccls.setup {
     init_options = {
         diagnostics = {
@@ -20,7 +21,10 @@ require('lspconfig').ccls.setup {
         };
         highlight = { lsRanges = true; };
         index = { comments = 2 };
+        cache = { directory = ''; };
     };
+    -- Don't treat git submodules as new CCLS trees.
+    root_dir = util.root_pattern('compile_commands.json', '.ccls');
 }
 
 require('lspconfig').pylsp.setup {
