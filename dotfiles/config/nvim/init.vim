@@ -44,6 +44,9 @@ set wildmode=longest:list
 set expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set foldmethod=indent
 set foldlevelstart=3
+set foldopen-=block
+set foldopen-=search
+set foldopen-=hor
 
 " easier buffer navigation
 nnoremap <Tab> :bnext<CR>
