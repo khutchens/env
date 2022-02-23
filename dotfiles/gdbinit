@@ -23,7 +23,9 @@ set filename-display basename
 # general behavior
 set disassemble-next-line on
 set backtrace past-main on
-set backtrace past-entry on
+#set backtrace past-entry on
 
 # save history to file so it persists between sessions
 set history save on
+
+alias texr = target extended-remote localhost:
