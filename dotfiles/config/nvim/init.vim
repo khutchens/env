@@ -42,8 +42,12 @@ set autowrite
 set number cursorline
 set wildmode=longest:list
 set expandtab shiftwidth=4 softtabstop=4 tabstop=4
+
+" folding
 set foldmethod=indent
-set foldlevelstart=3
+set foldcolumn=3
+set foldminlines=3
+set foldnestmax=3
 set foldopen-=block
 set foldopen-=search
 set foldopen-=hor
