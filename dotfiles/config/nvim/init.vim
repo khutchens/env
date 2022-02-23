@@ -6,6 +6,7 @@ Plug 'junegunn/fzf'
 Plug 'neovim/nvim-lspconfig'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'khutchens/colorful.vim'
+Plug 'weilbith/nvim-lsp-smag'
 call plug#end()
 
 " LSP configs ******************************************************************
@@ -66,23 +67,13 @@ nnoremap <leader>E :cN<CR>
 " use <space> to clear hilight after searching
 nnoremap <silent> <Space> :<C-U>noh<CR>:cclose<CR>
 
+" LSP
+nnoremap <silent> <leader>d :lua vim.diagnostic.setloclist()<CR>
+nnoremap K :lua vim.lsp.buf.hover()<CR>
+
 " keep sign column open to avoid it coming and going during editing, which is
 " an LSP side effect.
 set scl=yes
-
-" LSP **************************************************************************
-
-nnoremap <silent> <leader>d :lua vim.diagnostic.setloclist()<CR>
-nnoremap gd     :lua vim.lsp.buf.declaration()<CR>
-nnoremap gf     :lua vim.lsp.buf.definition()<CR>
-nnoremap K      :lua vim.lsp.buf.hover()<CR>
-nnoremap gt     :lua vim.lsp.buf.type_definition()<CR>
-nnoremap gr     :lua vim.lsp.buf.references()<CR>
-nnoremap gp     :pop!<CR>
-nnoremap gP     :bdelete<CR>:pop!<CR>
-
-nnoremap g1     :lua vim.lsp.buf.incoming_calls()<CR>
-nnoremap g2     :lua vim.lsp.buf.outgoing_calls()<CR>
 
 " clang-format *****************************************************************
 
