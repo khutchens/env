@@ -46,9 +46,9 @@ set expandtab shiftwidth=4 softtabstop=4 tabstop=4
 
 " folding
 set foldmethod=indent
-set foldcolumn=3
-set foldminlines=3
-set foldnestmax=3
+set foldcolumn=1
+"set foldminlines=2
+set foldnestmax=1
 set foldopen-=block
 set foldopen-=search
 set foldopen-=hor
@@ -110,5 +110,13 @@ endfunction
 
 " filetypes ********************************************************************
 
+function AutoFold()
+    if line('$') > &lines - 2
+        :set foldlevel=0
+    else
+        :set foldlevel=1
+    endif
+endfunction
 au BufNewFile,BufRead *.openocd setf tcl
 au BufNewFile,BufRead *.expect setf expect
+au BufNewFile,BufRead * :call AutoFold()
