@@ -6,6 +6,8 @@ Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'junegunn/fzf'
 Plug 'khutchens/colorful.vim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'weilbith/nvim-lsp-smag'
 call plug#end()
 
