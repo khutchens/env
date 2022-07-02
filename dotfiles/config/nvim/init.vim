@@ -2,10 +2,10 @@
 
 " Run :PlugInstall after updating this list to install plugins.
 call plug#begin(stdpath('data') . '/plugged')
-Plug 'junegunn/fzf'
-Plug 'neovim/nvim-lspconfig'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
+Plug 'junegunn/fzf'
 Plug 'khutchens/colorful.vim'
+Plug 'neovim/nvim-lspconfig'
 Plug 'weilbith/nvim-lsp-smag'
 call plug#end()
 
