@@ -35,6 +35,7 @@ EOF
 " syntax/colors ****************************************************************
 
 colorscheme colorful
+hi Visual ctermbg=black cterm=reverse
 
 " settings/mappings ************************************************************
 
