@@ -123,4 +123,5 @@ function AutoFold()
 endfunction
 au BufNewFile,BufRead *.openocd setf tcl
 au BufNewFile,BufRead *.expect setf expect
-au BufNewFile,BufRead * :call AutoFold()
+"au BufNewFile,BufRead * :call AutoFold()
+au BufNewFile * :call AutoFold()
