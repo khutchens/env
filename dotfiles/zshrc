@@ -34,7 +34,7 @@ hash -r
 
 # prompt
 export PROMPT='%F{blue}%1~%f %F{red}%#%f '
-export RPROMPT='%(?.%F{green}ok.%F{red}e:%?)%f'
+#export RPROMPT='%(?.%F{green}ok.%F{red}e:%?)%f'
 
 # history
 setopt HIST_IGNORE_ALL_DUPS  # do not put duplicated commands into history list
@@ -42,6 +42,7 @@ setopt HIST_SAVE_NO_DUPS  # do not save duplicated commands
 setopt HIST_REDUCE_BLANKS  # remove unnecessary blanks
 setopt INC_APPEND_HISTORY_TIME  # append commands to history file immediately after execution
 setopt EXTENDED_HISTORY  # record command start time
+setopt NO_AUTO_MENU
 
 # ENV
 export EDITOR=nvim
