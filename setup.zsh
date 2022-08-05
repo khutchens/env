@@ -2,8 +2,19 @@
 
 dot_path=${0:a:h}/dotfiles
 
-ln -hsv $dot_path/config ~/.config
-ln -hsv $dot_path/gdb ~/.gdb
-ln -hsv $dot_path/gdbinit ~/.gdbinit
-ln -hsv $dot_path/gitconfig ~/.gitconfig
-ln -hsv $dot_path/zshrc ~/.zshrc
+declare -A dot_files
+dot_files=(
+    [$HOME/.config]=$dot_path/config
+    [$HOME/.zshrc]=$dot_path/zshrc
+)
+
+platform=$(uname)
+if [[ $platform = Darwin ]]; then
+    ln_opts=-shv
+elif [[ $platform = Linux ]]; then
+    ln_opts=-snv
+fi
+
+for link target in ${(kv)dot_files}; do
+    ln $ln_opts $target $link
+done

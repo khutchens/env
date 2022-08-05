@@ -1,9 +1,11 @@
 # Homebrew #####################################################################
-if (( ! $+commands[brew] )); then
-    echo "\033[36mInstalling Homebrew...\033[0m"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    brew tap tavianator/tap
-    brew install zsh fzf ag nvim tavianator/tap/bfs
+if [[ $(uname) = Darwin ]]; then
+    if (( ! $+commands[brew] )); then
+        echo "\033[36mInstalling Homebrew...\033[0m"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew tap tavianator/tap
+        brew install zsh fzf ag nvim tavianator/tap/bfs
+    fi
 fi
 
 # zplug ########################################################################
@@ -16,8 +18,8 @@ source ~/.zplug/init.zsh
 #zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 zplug 'khutchens/fzf-zsh'
     FZF_ZSH__FIND_CMD='bfs'
-zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
-zplug 'khutchens/mdserve', as:'command', use:'mdserve.py', rename-to:'mdserve'
+#zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
+#zplug 'khutchens/mdserve', as:'command', use:'mdserve.py', rename-to:'mdserve'
 
 if ! zplug check; then
     echo "\033[36mInstalling plugins...\033[0m"
@@ -33,7 +35,13 @@ hash -r
 # ZSH ##########################################################################
 
 # prompt
-export PROMPT='%F{blue}%1~%f %F{red}%#%f '
+autoload -U colors && colors
+if [[ $SSH_TTY ]]; then
+    prefix='%F{magenta}%n%F{yellow}@%F{cyan}%m%f '
+else
+    prefix=''
+fi
+export PROMPT="$prefix%F{blue}%(3~|%-1~/…/%1~|%3~)%f %F{red}%# %f"
 #export RPROMPT='%(?.%F{green}ok.%F{red}e:%?)%f'
 
 # history
@@ -63,10 +71,23 @@ alias fe=fzf_zsh__edit
 alias fh=fzf_zsh__exec_history
 alias fk=fzf_zsh__kill
 
-export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
-alias ls='ls -FG'
 alias ll='ls -lh'
-alias la='ll -as'
+alias la='ll -a'
+
+if [[ $(uname) = Darwin ]]; then
+    export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
+    alias ls='ls -FG'
+elif [[ $(uname) = Linux ]]; then
+    export LS_COLORS='rs=0:di=00;35:ln=00;33:su=01:sg=01:tw=01;35:ow=01;35:ex=00;32:'
+    alias ls='ls -F --color=auto'
+fi
 
 alias grep='grep --color=auto'
 alias vim='nvim'
+
+# Aliases ######################################################################
+
+vimplug="${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim
+if [[ ! -f $vimplug ]]; then
+sh -c "curl -fLo $vimplug --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+fi
