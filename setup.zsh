@@ -18,3 +18,5 @@ fi
 for link target in ${(kv)dot_files}; do
     ln $ln_opts $target $link
 done
+
+echo "Links created. Consider running additional setup if needed:\n - homebrew_init.zsh\n - vimplug_init.zsh"
