@@ -7,8 +7,8 @@ source ~/.zplug/init.zsh
 
 #zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 zplug 'khutchens/fzf-zsh'
-    FZF_ZSH__FIND_CMD='bfs'
 #zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
+    export FZF_ZSH__FIND_CMD='bfs'
 #zplug 'khutchens/mdserve', as:'command', use:'mdserve.py', rename-to:'mdserve'
 
 if ! zplug check; then
@@ -47,7 +47,7 @@ export PYTHONUNBUFFERED=1
 autoload -Uz compinit && compinit # enable auto-complete
 
 # Prefer bfs for fzf
-if (( ! $+commands[bfs] )); then
+if (( $+commands[bfs] )); then
     export FZF_DEFAULT_COMMAND='bfs -type f -follow -maxdepth 12 2> /dev/null'
 fi
 
