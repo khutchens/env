@@ -7,8 +7,8 @@ source ~/.zplug/init.zsh
 
 #zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 zplug 'khutchens/fzf-zsh'
-#zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
     export FZF_ZSH__FIND_CMD='bfs'
+zplug 'khutchens/sdt', as:'command', use:'sdt.py', rename-to:'sdt'
 #zplug 'khutchens/mdserve', as:'command', use:'mdserve.py', rename-to:'mdserve'
 
 if ! zplug check; then
