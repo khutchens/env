@@ -6,6 +6,7 @@ declare -A dot_files
 dot_files=(
     [$HOME/.config]=$dot_path/config
     [$HOME/.zshrc]=$dot_path/zshrc
+    [$HOME/.gdbinit]=$dot_path/gdbinit
 )
 
 platform=$(uname)
