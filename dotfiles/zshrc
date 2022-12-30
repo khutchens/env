@@ -27,7 +27,7 @@ hash -r
 # prompt
 autoload -U colors && colors
 if [[ $SSH_TTY ]]; then
-    prefix='%F{magenta}%n%F{yellow}@%F{cyan}%m%f '
+    prefix='%F{magenta}%m%F{yellow}:%f'
 else
     prefix=''
 fi
