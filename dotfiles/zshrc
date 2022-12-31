@@ -85,6 +85,8 @@ fi
 #
 # These are optional and are not committed to repo.
 
-if [[ -f /.zshrc_local ]]; then
-    source .zshrc_local
+local_config=~/.zshrc_local
+if [[ -f $local_config ]]; then
+    echo "\033[36mLoading $local_config...\033[0m"
+    source $local_config
 fi
