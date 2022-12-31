@@ -20,4 +20,4 @@ for link target in ${(kv)dot_files}; do
     ln $ln_opts $target $link
 done
 
-echo "Links created. Consider running additional setup if needed:\n - homebrew_init.zsh\n - vimplug_init.zsh"
+echo "\e[32mLinks created. Consider running additional setup if needed:\n\e[36m - homebrew_init.zsh\n - nvim_paq_init.zsh\e[0m"
