@@ -80,3 +80,11 @@ fi
 if (( $+commands[nvim] )); then
     alias vim='nvim'
 fi
+
+# Local configs ################################################################
+#
+# These are optional and are not committed to repo.
+
+if [[ -f /.zshrc_local ]]; then
+    source .zshrc_local
+fi
