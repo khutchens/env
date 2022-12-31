@@ -1,14 +1,11 @@
 -- Plugins -------------------------------------------------------------------------------------------------------------
 
-local packer = require('packer')
-packer.startup(
-    function(use)
-    use 'wbthomason/packer.nvim'
-    use 'junegunn/fzf'
-    use 'khutchens/colorful.vim'
-    --use 'jackguo380/vim-lsp-cxx-highlight'
-    use 'neovim/nvim-lspconfig'
-end)
+require 'paq' {
+    'savq/paq-nvim';
+    'junegunn/fzf';
+    'khutchens/colorful.vim';
+    'neovim/nvim-lspconfig';
+}
 
 -- Options, settings, mappings, auto-commands --------------------------------------------------------------------------
 
