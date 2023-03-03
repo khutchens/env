@@ -89,24 +89,24 @@ vim.api.nvim_set_keymap('n', 'K', ':lua vim.lsp.buf.hover()<CR>', {noremap = tru
 --vim.api.nvim_create_autocmd({'BufNewFile', 'BufRead'}, {pattern={'*.cc'}, callback=cpp_lsp_cb})
 
 -- CCLS init options are supplied as a JSON string
-local ccls_init_options = [[
---init={
-    "diagnostics":  { "onOpen": 0, "onSave": 0, "onChange": 10 },
-    "highlight": { "lsRanges": true },
-    "index": { "comments": 2 },
-    "cache": { "directory": "" }
-}
-]]
-
-function start_ccls()
-    vim.lsp.start({
-        name = 'c++',
-        cmd = {'ccls', '-v=2', '--log-file=/Users/kyle/ccls.log', ccls_init_options},
-        root_dir = vim.fs.dirname(vim.fs.find({'compile_commands.json', '.ccls'}, { upward = true })[1]),
-    })
-end
-
-vim.api.nvim_create_autocmd({'BufNewFile', 'BufRead'}, {pattern={'*.cc'}, callback=start_ccls })
+--local ccls_init_options = [[
+----init={
+--    "diagnostics":  { "onOpen": 0, "onSave": 0, "onChange": 10 },
+--    "highlight": { "lsRanges": true },
+--    "index": { "comments": 2 },
+--    "cache": { "directory": "" }
+--}
+--]]
+--
+--function start_ccls()
+--    vim.lsp.start({
+--        name = 'c++',
+--        cmd = {'ccls', '-v=2', '--log-file=/Users/kyle/ccls.log', ccls_init_options},
+--        root_dir = vim.fs.dirname(vim.fs.find({'compile_commands.json', '.ccls'}, { upward = true })[1]),
+--    })
+--end
+--
+--vim.api.nvim_create_autocmd({'BufNewFile', 'BufRead'}, {pattern={'*.cc', '*.cpp', '*.c', '*.hpp', '*.h'}, callback=start_ccls })
 
 --autocmd BufNewFile,BufRead *.cc,*.cpp,*.hpp,*.c,*.h
 --
