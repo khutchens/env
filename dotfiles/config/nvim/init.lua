@@ -139,7 +139,15 @@ vim.api.nvim_set_keymap('n', 'K', ':lua vim.lsp.buf.hover()<CR>', {noremap = tru
 --}
 
 -- fzf
-vim.api.nvim_set_keymap('n', '<leader>fe', ":call fzf#run({'down': '30%', 'sink': 'edit', 'options': '--multi'})<CR>", {noremap = true, silent = true})
+local fzf_source_file = io.open("source.fzf", "r")
+if fzf_source_file == nil then
+    vim.api.nvim_set_keymap('n', '<leader>fe', ":call fzf#run({'down': '30%', 'sink': 'edit', 'options': '--multi'})<CR>", {noremap = true, silent = true})
+else
+    fzf_source_cmd = fzf_source_file:read("*all"):gsub('\'', '\\\''):gsub('%c', '')
+    local call_cmd = string.format(":call fzf#run({'down': '30%%', 'source': '%s', 'sink': 'edit', 'options': '--multi'})<CR>", fzf_source_cmd)
+    vim.api.nvim_set_keymap('n', '<leader>fe', call_cmd, {noremap = true, silent = true})
+    fzf_source_file:close() 
+end
 vim.api.nvim_set_keymap('n', '<leader>fb', ":call fzf#run({'down': '30%', 'source': v:lua.GetListedBuffersByName(), 'sink': 'buffer'})<CR>", {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>fq', ":call fzf#run({'down': '30%', 'source': v:lua.GetListedBuffersByName(), 'sink': 'bdelete', 'options': '--multi'})<CR>", {noremap = true, silent = true})
 
