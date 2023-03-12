@@ -60,7 +60,7 @@ fi
 # System #######################################################################
 
 # Start ssh-agent if it's not already running
-if ! pidof /usr/bin/ssh-agent >/dev/null; then
+if [ -z $(pidof ssh-agent) ]; then
     # key lifetime is 28,800 seconds, which is 8 hours
     ssh-agent -t 28800 > ~/.ssh/.agent.pid
 fi
