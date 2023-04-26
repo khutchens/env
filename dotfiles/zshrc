@@ -88,6 +88,7 @@ if [[ $(uname) = Darwin ]]; then
 elif [[ $(uname) = Linux ]]; then
     export LS_COLORS='rs=0:di=00;35:ln=00;33:su=01:sg=01:tw=01;35:ow=01;35:ex=00;32:'
     alias ls='ls -F --color=auto'
+    alias ip='ip -color=auto -brief'
 fi
 
 if (( $+commands[nvim] )); then
