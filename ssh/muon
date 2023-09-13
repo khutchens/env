@@ -1,4 +1,4 @@
-Host mfc
+Host mfc mfc.* 172.16.*
     User root
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
