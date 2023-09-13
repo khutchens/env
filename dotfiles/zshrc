@@ -57,17 +57,6 @@ if (( $+commands[bfs] )); then
     export FZF_DEFAULT_COMMAND='bfs -type f -follow -maxdepth 12 2> /dev/null'
 fi
 
-# System #######################################################################
-
-# Start ssh-agent if it's not already running
-if [ -z $(pidof ssh-agent) ]; then
-    # key lifetime is 28,800 seconds, which is 8 hours
-    ssh-agent -t 28800 > ~/.ssh/.agent.pid
-fi
-
-# load ssh-agent env vars
-source ~/.ssh/.agent.pid >&/dev/null
-
 # Aliases ######################################################################
 
 alias fd=fzf_zsh__cd
