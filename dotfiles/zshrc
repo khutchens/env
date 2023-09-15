@@ -84,6 +84,19 @@ if (( $+commands[nvim] )); then
     alias vim='nvim'
 fi
 
+# FZF ##########################################################################
+
+function fm {
+    if (( ${+1} )); then
+        build_path=$1
+    else
+        build_path=build
+    fi
+
+    target=$(make help | fzf | awk '{print $2}')
+    make -C $build_path $target -j16
+}
+
 # Local configs ################################################################
 #
 # These are optional and are not committed to repo.
