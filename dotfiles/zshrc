@@ -59,7 +59,7 @@ alias fdu=fzf_zsh__cd_upward
 alias fe=fzf_zsh__edit
 alias fh=fzf_zsh__exec_history
 alias fk=fzf_zsh__kill
-function fs { echo screen $(find /dev/serial -type l,c | fzf) ${1:-115200} }
+function fs { screen $(find /dev/serial -type l,c | fzf) ${1:-115200} }
 
 alias ll='ls -lh'
 alias la='ll -a'
