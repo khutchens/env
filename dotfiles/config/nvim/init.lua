@@ -139,7 +139,7 @@ vim.api.nvim_set_keymap('n', 'K', ':lua vim.lsp.buf.hover()<CR>', {noremap = tru
 --}
 
 -- fzf
-vim.api.nvim_set_keymap('n', '<leader>fe', ":call fzf#run({'down': '30%', 'sink': 'edit', 'options': '--multi'})<CR>", {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>fe', ":call fzf#run({'down': '30%', 'source': 'bfs $(echo $(cat .bfsopts))', 'sink': 'edit', 'options': '--multi'})<CR>", {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>fb', ":call fzf#run({'down': '30%', 'source': v:lua.GetListedBuffersByName(), 'sink': 'buffer'})<CR>", {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>fq', ":call fzf#run({'down': '30%', 'source': v:lua.GetListedBuffersByName(), 'sink': 'bdelete', 'options': '--multi'})<CR>", {noremap = true, silent = true})
 
