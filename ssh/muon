@@ -12,7 +12,7 @@ Host muon-*
     CanonicalizeHostname yes
     CanonicalDomains labs.muonspace.com
 
-    ControlPath ~/.ssh/control-master-sockets/%r@%h:%p
+    ControlPath ~/.ssh/%r@%h:%p
     ControlMaster auto
     ControlPersist 10m
 
