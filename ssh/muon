@@ -30,6 +30,6 @@ Host ms2-egse
     Hostname muon-egse-cart-1
     ProxyJump muon-lab1
 
-    ControlPath ~/.ssh/control-master-sockets/%r@%h:%p
+    ControlPath ~/.ssh/%r@%h:%p
     ControlMaster auto
     ControlPersist 10m
