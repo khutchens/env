@@ -47,6 +47,7 @@ setopt EXTENDED_HISTORY  # record command start time
 setopt NO_AUTO_MENU
 
 # ENV
+export EDITOR=vim
 export PYTHONUNBUFFERED=1
 autoload -Uz compinit && compinit # enable auto-complete
 
@@ -64,6 +65,8 @@ alias ll='ls -lh'
 alias la='ll -a'
 
 alias grep='grep --color=auto'
+
+alias tig='tig --branches="kyle/*" --branches="main*"'
 
 if [[ $(uname) = Darwin ]]; then
     export LSCOLORS="fxdxxxxxcxxxxxcAcAfAfA"
