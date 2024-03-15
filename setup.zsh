@@ -7,6 +7,7 @@ dot_files=(
     [$HOME/.config]=$dot_path/config
     [$HOME/.zshrc]=$dot_path/zshrc
     [$HOME/.gdbinit]=$dot_path/gdbinit
+    [$HOME/.tigrc]=$dot_path/tigrc
 )
 
 platform=$(uname)
