@@ -37,6 +37,12 @@ Host wintermute.remote
     HostName wintermute.local
     ProxyJump goldeneye.remote
 
+Host dev01.*
+    User kyle
+    IdentityFile ~/.ssh/id-dev01
+    AddKeysToAgent yes
+    ForwardAgent yes
+
 Host irrigator.*
     User kyle
     #IdentityFile ~/.ssh/id-wintermute

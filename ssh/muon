@@ -3,9 +3,10 @@ Host mfc mfc.* 172.16.*
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
 
-Host muon-*
+Host muon*
     User kyle
     IdentityFile ~/.ssh/id-muon_lab_sso
+
     AddKeysToAgent yes
     ForwardAgent yes
 
@@ -16,46 +17,5 @@ Host muon-*
     ControlMaster auto
     ControlPersist 10m
 
-    # Alternate configs for logging in as muon user:
-    #User muon
-    #IdentityFile ~/.ssh/id-muon_proxy
-
-    # Alternate configs for Ansible runs:
-    #User muon
-    #IdentityFile ~/.ssh/id-muon_lab_shared
-
-Host muon@muon-lab-firecamera
-    #User kyle
-    #IdentityFile ~/.ssh/id-muon_lab_sso
-    AddKeysToAgent yes
-    ForwardAgent yes
-
-    CanonicalizeHostname yes
-    CanonicalDomains labs.muonspace.com
-
-    ControlPath ~/.ssh/%r@%h:%p
-    ControlMaster auto
-    ControlPersist 10m
-
-    # Alternate configs for logging in as muon user:
-    User muon
-    IdentityFile ~/.ssh/id-muon_proxy
-
-    # Alternate configs for Ansible runs:
-    #User muon
-    #IdentityFile ~/.ssh/id-muon_lab_shared
-
-Host ms2-egse
-    User kyle
-    IdentityFile ~/.ssh/id-muon_lab_sso
-    #User muon
-    #IdentityFile ~/.ssh/id-muon_lab_shared
-    AddKeysToAgent yes
-    ForwardAgent yes
-
-    Hostname muon-egse-cart-1
-    ProxyJump muon-lab1
-
-    #ControlPath ~/.ssh/%r@%h:%p
-    #ControlMaster auto
-    #ControlPersist 10m
+Host muon-egse-cart*
+    ProxyJump muon-lab-bastion
