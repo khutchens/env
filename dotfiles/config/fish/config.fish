@@ -1,6 +1,12 @@
 if status is-interactive
     # No greeting on login
     set -g fish_greeting
+
+    # Path
+    fish_add_path ~/.cargo/bin
+
+    # Configs
+    set -g EDITOR hx
     
     # Aliases
     alias ls='eza --git --git-repos --classify --group-directories-first --smart-group --header'
@@ -65,4 +71,9 @@ function ls_parents
             cd ..
         end
     end
+end
+
+set local_config ~/.local/config.fish
+if test -e $local_config
+    source $local_config
 end
