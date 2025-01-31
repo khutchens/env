@@ -1,4 +1,8 @@
 if status is-interactive
+    # No greeting on login
+    set -g fish_greeting
+    
+    # Aliases
     alias ls='eza --git --git-repos --classify --group-directories-first --smart-group --header'
     abbr --add ll 'ls -l'
     abbr --add la 'ls -a'
@@ -10,9 +14,11 @@ if status is-interactive
     abbr --add fdu 'cd $(ls_parents | fzf)'
     abbr --add fe 'hx $(bfs -type f | fzf -m)'
 
+    # Colors
     set fish_color_user magenta
     set fish_color_cwd blue
     
+    # Prompt
     function fish_prompt
         set -l last_status $status
 
@@ -28,11 +34,13 @@ if status is-interactive
         echo ">"
     end
 
+    # Add a blank line after commands complete
     function postexec_test --on-event fish_postexec
        echo
     end
 end
 
+# Shorten a path by keeping first and last elements and replacing everything in bewtween with "…"
 function short_path
     set --local home_path (string escape --style=regex -- ~)
 
@@ -46,6 +54,7 @@ function short_path
     end
 end
 
+# List parent directories up to root for use with 'fdu' alias
 function ls_parents
     while true
         echo $PWD
