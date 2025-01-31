@@ -20,6 +20,10 @@ if status is-interactive
     abbr --add fdu 'cd $(ls_parents | fzf)'
     abbr --add fe 'hx $(bfs -type f | fzf -m)'
 
+    if test (uname) = 'Linux'
+        abbr --add ip 'ip --color=auto -brief'
+    end
+    
     # Colors
     set fish_color_user magenta
     set fish_color_cwd blue
