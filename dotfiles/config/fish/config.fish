@@ -11,6 +11,8 @@ if status is-interactive
     abbr --add fd 'cd $(bfs -type d | fzf)'
     abbr --add fdu 'cd $(ls_parents | fzf)'
     abbr --add fe 'hx $(bfs -type f | fzf -m)'
+
+    fish_config prompt choose astronaut
 end
 
 function ls_parents
