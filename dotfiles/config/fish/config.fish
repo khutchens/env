@@ -26,7 +26,11 @@ if status is-interactive
     function fish_prompt
         set --local last_status $status
 
-        set --local host (set_color $fish_color_host)"$hostname"(set_color normal)
+        set --local host
+        if set --query SSH_TTY
+            set host (set_color $fish_color_host)"$hostname"(set_color normal)
+        end
+
         set --local path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
         
         set --local stat
