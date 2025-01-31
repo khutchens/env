@@ -28,18 +28,17 @@ if status is-interactive
 
         set --local host
         if set --query SSH_TTY
-            set host (set_color $fish_color_host)"$hostname"(set_color normal)
+            set host (set_color $fish_color_host)"$hostname "(set_color normal)
         end
 
         set --local path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
         
         set --local stat
         if test $last_status -ne 0
-            set stat (set_color red)"[$last_status]"(set_color normal)
+            set stat (set_color red)"[$last_status] "(set_color normal)
         end
 
-        echo "$host $path$stat"
-        echo ">"
+        echo "$host$path$stat>"
     end
 
     # Add a blank line after commands complete
