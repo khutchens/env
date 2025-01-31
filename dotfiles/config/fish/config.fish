@@ -1,24 +1,18 @@
 if status is-interactive
     # No greeting on login
-    set -g fish_greeting
+    set --global fish_greeting
 
-    # Path
-    fish_add_path ~/.cargo/bin
-
-    # Configs
-    set -g EDITOR hx
-    
     # Aliases
     alias ls='eza --git --git-repos --classify --group-directories-first --smart-group --header'
-    abbr --add ll 'ls -l'
-    abbr --add la 'ls -a'
-    abbr --add lt 'ls -TL2'
-    abbr --add llt 'ls -lTL2'
+    abbr --add ll   'ls -l'
+    abbr --add la   'ls -a'
+    abbr --add lt   'ls -TL2'
+    abbr --add ll t 'ls -lTL2'
     abbr --add lltt 'ls -lT'
 
-    abbr --add fd 'cd $(bfs -type d | fzf)'
     abbr --add fdu 'cd $(ls_parents | fzf)'
-    abbr --add fe 'hx $(bfs -type f | fzf -m)'
+    abbr --add fd  'cd $(bfs -type d | fzf)'
+    abbr --add fe  'hx $(bfs -type f | fzf -m)'
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
@@ -30,12 +24,12 @@ if status is-interactive
     
     # Prompt
     function fish_prompt
-        set -l last_status $status
+        set --local last_status $status
 
-        set -l host (set_color $fish_color_host)"$hostname"(set_color normal)
-        set -l path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
+        set --local host (set_color $fish_color_host)"$hostname"(set_color normal)
+        set --local path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
         
-        set -l stat
+        set --local stat
         if test $last_status -ne 0
             set stat (set_color red)"[$last_status]"(set_color normal)
         end
@@ -50,12 +44,18 @@ if status is-interactive
     end
 end
 
+# Path
+fish_add_path ~/.cargo/bin
+
+# Configs
+set --global --export EDITOR hx
+
 # Shorten a path by keeping first and last elements and replacing everything in bewtween with "…"
 function short_path
     set --local home_path (string escape --style=regex -- ~)
 
     for path in $argv
-        set path (string replace -r '^'"$home_path"'($|/)' '~$1' $path)
+        set path (string replace --regex '^'"$home_path"'($|/)' '~$1' $path)
         set dirs $(string split '/' $path)
         if test $(count $dirs) -gt 2
             set dirs $dirs[1] "…" $dirs[-1]
