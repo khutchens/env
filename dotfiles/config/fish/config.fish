@@ -24,26 +24,14 @@ if status is-interactive
     
     # Prompt
     function fish_prompt
-        set --local last_status $status
-
         set --local host
         if set --query SSH_TTY
             set host (set_color $fish_color_host)"$hostname "(set_color normal)
         end
 
         set --local path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
-        
-        set --local stat
-        if test $last_status -ne 0
-            set stat (set_color red)"[$last_status] "(set_color normal)
-        end
 
-        echo "$host$path$stat>"
-    end
-
-    # Add a blank line after commands complete
-    function postexec_test --on-event fish_postexec
-       echo
+        echo "$host$path>"
     end
 end
 
