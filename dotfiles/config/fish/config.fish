@@ -49,6 +49,7 @@ end
 
 # Path
 fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
 
 # Configs
 set --global --export EDITOR hx
