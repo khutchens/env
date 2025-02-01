@@ -20,6 +20,7 @@ if status is-interactive
     
     # Colors
     set fish_color_user magenta
+    set fish_color_host yellow
     set fish_color_cwd blue
     
     # Prompt
