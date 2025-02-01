@@ -7,7 +7,7 @@ if status is-interactive
     abbr --add ll   'ls -l'
     abbr --add la   'ls -a'
     abbr --add lt   'ls -TL2'
-    abbr --add ll t 'ls -lTL2'
+    abbr --add llt  'ls -lTL2'
     abbr --add lltt 'ls -lT'
 
     abbr --add fdu 'cd $(ls_parents | fzf)'
