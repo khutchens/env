@@ -13,6 +13,7 @@ if status is-interactive
     abbr --add fdu 'cd $(ls_parents | fzf)'
     abbr --add fd  'cd $(bfs -type d | fzf)'
     abbr --add fe  'hx $(bfs -type f | fzf -m)'
+    abbr --add fh  'commandline (history | fzf)'
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
