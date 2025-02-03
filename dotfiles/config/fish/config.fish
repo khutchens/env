@@ -20,20 +20,32 @@ if status is-interactive
     end
     
     # Colors
-    set fish_color_user magenta
-    set fish_color_host yellow
-    set fish_color_cwd blue
+    set fish_color_user    magenta
+    set fish_color_host    yellow
+    set fish_color_cwd     magenta
+    set fish_color_command white --bold
     
     # Prompt
     function fish_prompt
-        set --local host
-        if set --query SSH_TTY
-            set host (set_color $fish_color_host)"$hostname "(set_color normal)
-        end
+        set --local last_status $status
 
-        set --local path  $(set_color $fish_color_cwd; short_path $PWD; set_color normal)
+        echo -s (
+            if set --query SSH_TTY
+                set_color $fish_color_host
+                echo -n "$hostname "
+            end
 
-        echo "$host$path>"
+            set_color $fish_color_cwd
+            short_path $PWD
+
+            if test $last_status -eq 0
+                set_color blue
+            else
+                set_color red
+            end
+
+            echo -n " >"
+        )
     end
 end
 
