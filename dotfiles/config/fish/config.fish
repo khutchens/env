@@ -55,7 +55,7 @@ fish_add_path ~/.local/bin
 # Configs
 set --global --export EDITOR hx
 
-# Shorten a path by keeping first and last elements and replacing everything in bewtween with "…"
+# Shorten a path by keeping first and last elements and replacing everything in between with "…"
 function short_path
     set --local home_path (string escape --style=regex -- ~)
 
