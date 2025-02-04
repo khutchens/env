@@ -3,12 +3,11 @@ if status is-interactive
     set --global fish_greeting
 
     # Aliases
-    alias ls='eza --git --git-repos --classify --group-directories-first --smart-group --header'
+    alias ls='eza --classify --group-directories-first --smart-group --header'
     abbr --add ll   'ls -l'
     abbr --add la   'ls -a'
     abbr --add lt   'ls -TL2'
-    abbr --add llt  'ls -lTL2'
-    abbr --add lltt 'ls -lT'
+    abbr --add ltt  'ls -T'
 
     abbr --add fdu 'cd $(ls_parents | fzf)'
     abbr --add fd  'cd $(bfs -type d | fzf)'
