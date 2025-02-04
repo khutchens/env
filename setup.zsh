@@ -9,11 +9,11 @@ elif [[ $platform = Linux ]]; then
 fi
 
 function link {
-  target_path=$1
-  link_path=$HOME/.$target_path
+    target_path=$1
+    link_path=$HOME/.$target_path
 
-  mkdir -p $link_path:h
-  ln $ln_opts $target_path:a $link_path
+    mkdir -p $link_path:h
+    ln $ln_opts $target_path:a $link_path
 }
 
 cd $0:a:h/dotfiles
