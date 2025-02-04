@@ -1,5 +1,5 @@
 #! /usr/bin/env zsh
-set -eu
+set -u
 
 platform=$(uname)
 if [[ $platform = Darwin ]]; then
