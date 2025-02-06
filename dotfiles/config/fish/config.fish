@@ -1,4 +1,8 @@
 if status is-interactive
+    echo Checking .env/ status...
+    git -C .env fetch
+    git -C .env status --untracked-files=no --short
+    
     # No greeting on login
     set --global fish_greeting
 
