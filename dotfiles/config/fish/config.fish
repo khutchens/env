@@ -3,7 +3,9 @@ if status is-interactive
     set --global fish_greeting
 
     # Aliases
-    alias ls='eza --classify --group-directories-first --smart-group --header'
+    if type -q eza
+        alias ls='eza --classify --group-directories-first --smart-group --header'
+    end
     abbr --add ll   'ls -l'
     abbr --add la   'ls -a'
     abbr --add lt   'ls -TL2'
@@ -53,7 +55,11 @@ fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
 
 # Configs
-set --global --export EDITOR hx
+if type -q hx
+    set --global --export EDITOR hx
+else
+    set --global --export EDITOR vim
+end
 
 # Shorten a path by keeping first and last elements and replacing everything in between with "…"
 function short_path
