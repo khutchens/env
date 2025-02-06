@@ -1,56 +1,5 @@
-Host goldeneye.*
+Host *.local
     User kyle
-    IdentityFile ~/.ssh/id-goldeneye
-    AddKeysToAgent yes
-    ForwardAgent yes
-Host goldeneye.remote
-    HostName junglenet-goldeneye.duckdns.org
-    #HostName 192.184.168.58
-    Port 51966
-
-Host calculon.* calculon*.*
-    User kyle
-    IdentityFile ~/.ssh/id-calculon
-    AddKeysToAgent yes
-    ForwardAgent yes
-Host calculon.remote
-    HostName calculon.local
-    ProxyJump goldeneye.remote
-    LocalForward 3000 localhost:3000
-    LocalForward 8086 localhost:8086
-
-Host neuromancer.*
-    User kyle
-    IdentityFile ~/.ssh/id-neuromancer
-    AddKeysToAgent yes
-    ForwardAgent yes
-Host neuromancer.remote
-    HostName neuromancer.local
-    ProxyJump goldeneye.remote
-
-Host wintermute.*
-    User kyle
-    IdentityFile ~/.ssh/id-wintermute
-    AddKeysToAgent yes
-    ForwardAgent yes
-Host wintermute.remote
-    HostName wintermute.local
-    ProxyJump goldeneye.remote
-
-Host dev01.*
-    User kyle
-    IdentityFile ~/.ssh/id-dev01
-    AddKeysToAgent yes
-    ForwardAgent yes
-
-Host irrigator.*
-    User kyle
-    #IdentityFile ~/.ssh/id-wintermute
-    AddKeysToAgent yes
-    ForwardAgent yes
-
-Host thermostat.*
-    User kyle
-    #IdentityFile ~/.ssh/id-wintermute
+    IdentityFile ~/.ssh/id-lan
     AddKeysToAgent yes
     ForwardAgent yes
