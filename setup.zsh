@@ -12,19 +12,22 @@ function link {
     target_path=$1
     link_path=$HOME/.$target_path
 
-    if [[ -e $link_path ]]; then
+    if [[ -L $link_path ]]; then
         echo "Link exists: $link_path -> $target_path"
-        return
+    elif [[ -d $link_path ]]; then
+        echo "Directory exists at link path: $link_path"
+    elif [[ -e $link_path ]]; then
+        echo "File exists at link path: $link_path"
+    else
+        mkdir -p $link_path:h
+        ln $ln_opts $target_path:a $link_path
     fi
-
-    mkdir -p $link_path:h
-    ln $ln_opts $target_path:a $link_path
 }
 
 cd $0:a:h/dotfiles
 
 link config/fish/config.fish
-link config/fish/functions/
+link config/fish/functions
 link config/helix/config.toml
 link gdbinit
 link tigrc
