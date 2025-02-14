@@ -15,10 +15,11 @@ if status is-interactive
     abbr --add lt   'ls -TL2'
     abbr --add ltt  'ls -T'
 
-    abbr --add fdu 'cd $(ls_parents | fzf)'
-    abbr --add fd  'cd $(bfs -type d | fzf)'
-    abbr --add fe  'hx $(bfs -type f | fzf -m)'
-    abbr --add fh  'commandline (history | fzf)'
+    abbr --add fdu fzf_cd_up
+    abbr --add fd  fzf_cd
+    abbr --add fe  fzf_edit
+    abbr --add fh  fzf_history
+    abbr --add fk  fzf_kill
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
