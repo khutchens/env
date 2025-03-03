@@ -3,3 +3,11 @@ Host *.local
     IdentityFile ~/.ssh/id-lan
     AddKeysToAgent yes
     ForwardAgent yes
+
+Host bastion1.remote
+    User kyle
+    IdentityFile ~/.ssh/id-lan
+    AddKeysToAgent yes
+    ForwardAgent yes
+    HostName 135.180.50.102
+    Port 51966
