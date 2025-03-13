@@ -30,6 +30,9 @@ if status is-interactive
     set fish_color_host    yellow
     set fish_color_cwd     magenta
     set fish_color_command white --bold
+
+    # Completions
+    COMPLETE=fish jj | source
 end
 
 # Path
