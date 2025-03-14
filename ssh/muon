@@ -3,7 +3,7 @@ Host mfc mfc.* 172.16.*
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
 
-Host muon*
+Host muon* fb-*
     User kyle
     IdentityFile ~/.ssh/id-muon_lab_sso
 
