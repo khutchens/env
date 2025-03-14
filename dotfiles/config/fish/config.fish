@@ -32,7 +32,9 @@ if status is-interactive
     set fish_color_command white --bold
 
     # Completions
-    COMPLETE=fish jj | source
+    if type -q jj
+        COMPLETE=fish jj | source
+    end
 end
 
 # Path
