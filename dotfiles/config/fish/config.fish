@@ -20,6 +20,7 @@ if status is-interactive
     abbr --add fe  fzf_edit
     abbr --add fh  fzf_history
     abbr --add fk  fzf_kill
+    abbr --add fs  "screen (find /dev/serial -type l | fzf) 115200"
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
