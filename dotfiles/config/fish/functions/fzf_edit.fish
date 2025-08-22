@@ -1,5 +1,6 @@
 function fzf_edit
-    if set --local selection (bfs -type f | fzf -m)
+    set -x
+    if set --local selection (bfs -type f (cat .bfsopts | tr ' ' '\n') | fzf -m)
         $EDITOR $selection
     end
 end
