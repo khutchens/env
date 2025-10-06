@@ -2,3 +2,4 @@
 mouse = false 
 auto-pairs = false 
 auto-format = false 
+smart-tab.enable = false
