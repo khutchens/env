@@ -1,0 +1,12 @@
+inherits = "base16_default"
+
+"ui.popup" = { fg = "gray", bg = "black" }
+"ui.menu" = { fg = "gray", bg = "black" }
+"ui.virtual.inlay-hint" = { fg = "gray", modifiers = ["italic"] }
+"ui.virtual.jump-label" = { fg = "white" }
+"ui.statusline" = { fg = "black", bg = "gray" }
+
+error = { fg = "red", modifiers = ["italic"] }
+warning = { fg = "yellow", modifiers = ["italic"] }
+info = { fg = "blue", modifiers = ["italic"] }
+hint = { fg = "gray", modifiers = ["italic"] }

@@ -1,5 +1,15 @@
-[editor] 
-mouse = false 
-auto-pairs = false 
-auto-format = false 
+theme = "kyle"
+
+[editor]
+auto-format = false
+auto-pairs = false
+end-of-line-diagnostics = "hint"
+inline-diagnostics.cursor-line = "warning"
+jump-label-alphabet = "abcdefhiklmnorstuvwxz"
+mouse = false
 smart-tab.enable = false
+
+[keys.normal.space]
+i = ":toggle lsp.display-inlay-hints"
+m = ":set end-of-line-diagnostics hint"
+M = ":set end-of-line-diagnostics disable"

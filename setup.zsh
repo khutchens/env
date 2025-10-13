@@ -29,5 +29,6 @@ cd $0:a:h/dotfiles
 link config/fish/config.fish
 link config/fish/functions
 link config/helix/config.toml
+link config/helix/themes
 link gdbinit
 link tigrc
