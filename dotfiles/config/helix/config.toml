@@ -4,9 +4,10 @@ theme = "kyle"
 auto-format = false
 auto-pairs = false
 end-of-line-diagnostics = "hint"
-inline-diagnostics.cursor-line = "warning"
+inline-diagnostics.cursor-line = "hint"
 jump-label-alphabet = "abcdefhiklmnorstuvwxz"
 mouse = false
+popup-border = "all"
 smart-tab.enable = false
 
 [keys.normal.space]

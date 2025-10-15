@@ -1,0 +1,14 @@
+[language-server.rust-analyzer.config]
+check.command = "clippy"
+
+[[language]]
+name = "starlark"
+formatter = { command = "buildifier" }
+
+[[language]]
+name = "python"
+formatter = { command = "black", args = ["--quiet", "-"] }
+
+[[language]]
+name = "rust"
+formatter = { command = "rustfmt", args = ["+nightly", "--edition=2024"] }
