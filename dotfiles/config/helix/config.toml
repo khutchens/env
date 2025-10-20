@@ -3,14 +3,22 @@ theme = "kyle"
 [editor]
 auto-format = false
 auto-pairs = false
+lsp.display-inlay-hints = false
 end-of-line-diagnostics = "hint"
 inline-diagnostics.cursor-line = "hint"
+inline-diagnostics.other-lines = "hint"
 jump-label-alphabet = "abcdefhiklmnorstuvwxz"
 mouse = false
 popup-border = "all"
 smart-tab.enable = false
 
-[keys.normal.space]
-i = ":toggle lsp.display-inlay-hints"
-m = ":set end-of-line-diagnostics hint"
-M = ":set end-of-line-diagnostics disable"
+[keys.normal]
+z.i = ":toggle lsp.display-inlay-hints"
+z.d = [
+  ":set inline-diagnostics.cursor-line hint",
+  ":set inline-diagnostics.other-lines hint",
+]
+z.n = [
+  ":set inline-diagnostics.cursor-line disable",
+  ":set inline-diagnostics.other-lines disable",
+]
