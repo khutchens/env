@@ -9,5 +9,5 @@ Host bastion1.remote
     IdentityFile ~/.ssh/id-lan
     AddKeysToAgent yes
     ForwardAgent yes
-    HostName 104.28.237.136
+    HostName 23.93.202.88
     Port 51966
