@@ -42,10 +42,12 @@ end
 # Path
 fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
+fish_add_path /usr/sbin
 
 # Configs
 if type -q hx
     set --global --export EDITOR hx
+    set --global --export HELIX_RUNTIME ~/.local/share/helix/runtime
 else
     set --global --export EDITOR vim
 end
@@ -56,3 +58,5 @@ set local_config ~/.local/config.fish
 if test -e $local_config
     source $local_config
 end
+
+pyenv init - fish | source
