@@ -52,11 +52,7 @@ else
     set --global --export EDITOR vim
 end
 
-set --global --export ORAS_CACHE ~/.local/oras/cache
-
 set local_config ~/.local/config.fish
 if test -e $local_config
     source $local_config
 end
-
-pyenv init - fish | source

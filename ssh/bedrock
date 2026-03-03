@@ -1,0 +1,5 @@
+Host dev
+    User ubuntu
+    HostName dev-box-khutchens
+    ForwardAgent yes
+    StrictHostKeyChecking no

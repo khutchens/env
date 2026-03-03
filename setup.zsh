@@ -31,5 +31,3 @@ link config/fish/functions
 link config/helix/config.toml
 link config/helix/languages.toml
 link config/helix/themes
-link gdbinit
-link tigrc
