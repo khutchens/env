@@ -1,4 +1,4 @@
-#! /usr/bin/env zsh
+#! /usr/bin/env bash
 set -u
 
 platform=$(uname)
@@ -19,15 +19,16 @@ function link {
     elif [[ -e $link_path ]]; then
         echo "File exists at link path: $link_path"
     else
-        mkdir -p $link_path:h
-        ln $ln_opts $target_path:a $link_path
+        mkdir -p $(dirname $link_path)
+        ln $ln_opts $(realpath $target_path) $link_path
     fi
 }
 
-cd $0:a:h/dotfiles
+cd $(dirname $(realpath $0))/dotfiles
 
 link config/fish/config.fish
 link config/fish/functions
 link config/helix/config.toml
 link config/helix/languages.toml
 link config/helix/themes
+link gdbinit
