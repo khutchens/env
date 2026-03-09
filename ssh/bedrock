@@ -2,4 +2,5 @@ Host dev
     User ubuntu
     HostName dev-box-khutchens
     ForwardAgent yes
+    AddKeysToAgent yes
     StrictHostKeyChecking no

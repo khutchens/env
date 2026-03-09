@@ -1,3 +1,4 @@
 Host github.com
+    User khutchens
     IdentityFile ~/.ssh/id-github
     AddKeysToAgent yes
