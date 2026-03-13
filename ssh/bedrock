@@ -1,4 +1,4 @@
-Host dev
+Host devbox
     User ubuntu
     HostName dev-box-khutchens
     ForwardAgent yes
