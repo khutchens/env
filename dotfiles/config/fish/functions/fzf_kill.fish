@@ -2,7 +2,7 @@ function fzf_kill
     set --local platform (uname)
 
     if test $platform = 'Linux'
-        set --function ps_cmd ps --user=kyle --format=pid,tty,command --no-headers
+        set --function ps_cmd ps --user=$USER --format=pid,tty,command --no-headers
     else if test $platform = 'Darwin'
         set --function ps_cmd ps -U $USER -o pid=,tty=,command= | grep -v '??'
     else
