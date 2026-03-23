@@ -1,3 +1,9 @@
+# Path
+fish_add_path --global /usr/sbin
+fish_add_path --global ~/.cargo/bin
+fish_add_path --global ~/.env/bin
+fish_add_path --global ~/.local/bin
+
 if status is-interactive
     if test $SHLVL -eq 1
         check_env_status
@@ -25,24 +31,21 @@ if status is-interactive
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
+    else if test (uname) = 'Darwin'
+        abbr --add ip 'ip --color=auto -brief'
     end
     
     # Colors
-    set fish_color_user    magenta
-    set fish_color_host    yellow
-    set fish_color_cwd     magenta
-    set fish_color_command white --bold
+    set --global fish_color_user    magenta
+    set --global fish_color_host    yellow
+    set --global fish_color_cwd     magenta
+    set --global fish_color_command white --bold
 
     # Completions
     if type -q jj
         COMPLETE=fish jj | source
     end
 end
-
-# Path
-fish_add_path ~/.cargo/bin
-fish_add_path ~/.local/bin
-fish_add_path /usr/sbin
 
 # Configs
 if type -q hx
