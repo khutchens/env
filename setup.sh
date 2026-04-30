@@ -26,6 +26,7 @@ function link {
 
 cd $(dirname $(realpath $0))/dotfiles
 
+link claude/CLAUDE.md
 link config/fish/config.fish
 link config/fish/functions
 link config/helix/config.toml
