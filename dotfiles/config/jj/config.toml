@@ -1,0 +1,72 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[colors]
+immutable = "cyan"
+"node immutable" = "cyan"
+"active branch" = "bright white"
+"inactive branch" = "white"
+
+[template-aliases]
+'short_desc' = '''
+if(description.first_line().len() > 63,
+  description.first_line().substr(0, 60) ++ "...",
+  description.first_line(),
+)
+'''
+
+[templates]
+log = '''
+if(root,
+  format_root_commit(self),
+  label(
+    separate(" ",
+      if(current_working_copy, "working_copy"),
+      if(immutable, "immutable", "mutable"),
+      if(conflict, "conflicted"),
+    ),
+    concat(
+      separate(" ",
+        change_id.shortest(3),
+        separate(" ",
+          if(empty, empty_commit_marker),
+          coalesce(
+            if(immutable, short_desc),
+            if(description.len() == 0, label("empty", "---")),
+            if(self.contained_in("::@"), label("active branch", description.first_line())),
+            label("inactive branch", description.first_line()),
+          ),
+        ),
+        bookmarks,
+        tags,
+        commit_id.shortest(7),
+        if(!mine, author.name()),
+        working_copies,
+      ),
+    ),
+  )
+)
+'''
+
+log_node = '''
+coalesce(
+  if(!self, label("elided", "~")),
+  label(
+    separate(" ",
+      if(self.contained_in("::@"), "active branch", "inactive branch"),
+      if(current_working_copy, "working_copy"),
+      if(conflict, "conflicted"),
+      if(immutable, "immutable", "mutable"),
+    ),
+    coalesce(
+      if(current_working_copy, "@"),
+      if(immutable, "◆"),
+      if(conflict, "×"),
+      if(empty, "○"),
+      "●",
+    )
+  )
+)
+'''
+
+[ui]
+default-command = "log"
