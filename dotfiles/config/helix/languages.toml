@@ -12,3 +12,16 @@ formatter = { command = "black", args = ["--quiet", "-"] }
 [[language]]
 name = "rust"
 formatter = { command = "rustfmt", args = ["+nightly", "--edition=2024"] }
+
+[[language]]
+name = "markdown"
+soft-wrap.enable = true
+soft-wrap.wrap-at-text-width = true
+
+[[language]]
+name = "c"
+formatter = { command = "clang-format", args = [] }
+
+[[language]]
+name = "cpp"
+formatter = { command = "clang-format", args = [] }
