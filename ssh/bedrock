@@ -1,31 +1,14 @@
 Host devbox
-    User ubuntu
-    HostName dev-box-khutchens
-    ForwardAgent yes
-    AddKeysToAgent yes
+    User                  ubuntu
+    HostName              dev-box-khutchens
+    ForwardAgent          yes
+    AddKeysToAgent        yes
     StrictHostKeyChecking no
 
-    # Forward Trace32 RCM port, devbox -> login client
-    RemoteForward 20000 localhost:20000
-
-Host mob-9
-    HostName bedrock-ipc-mob-9
-    User bedrock
+Host mob-*
+    HostName       bedrock-ipc-%h
+    User           bedrock
     AddKeysToAgent yes
 
-    # Forward Trace32 tcp-usb bridge port, login client -> MOB
-    LocalForward 8455 localhost:8455
-
     # Forward Zenoh connection port, MOB -> login client
-    LocalForward 8455 localhost:8455
-
-Host mob-10
-    HostName bedrock-ipc-mob-10
-    User bedrock
-    AddKeysToAgent yes
-
-    # Forward Trace32 tcp-usb bridge port, login client -> MOB
-    LocalForward 8455 localhost:8455
-
-    # Forward Zenoh connection port, MOB -> login client
-    LocalForward 8455 localhost:8455
+    # LocalForward 8455 localhost:8455
