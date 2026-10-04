@@ -1,9 +1,3 @@
-<!-- Copied from this example I found on github after a quick search https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md -->
-
-# CLAUDE.md
-
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ## Think Before Coding
@@ -62,10 +56,21 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## Style
+## Coding standards
 
 - When creating new tools from scratch, prefer to use Rust.
 
----
+## Communication Style
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+- Comments should highlight an odd choice, unknown pitfall, or otherwise be informing a reader with just as much context as you have about 'normal'. Do not recite what the code does, tell us why it does something other than an idiomatic example might do.
+- Less is more in technical writing. The longer the message, the more likely you are to lose your reader. Stick to active voice and get to the point.
+- Use ASD-STE100 simplified technical English.
+
+## Collaboration
+
+- Prefer to use `jj` over `git` whenever possible.
+- Before switching the active `jj` change or altering the change graph:
+    - Ask first.
+    - Check for an open editor (`pgrep -af 'hx|nvim|vim'`). If I have one open, ask again and warn me that I need to reload or risk clobbering your work. Remind me of this again when you're done working on the change graph.
+    - Leave the working copy on the same active change it started on whenever possible.
+- Make sure it's super clear when you're going to run long verification steps after making a change so I don't accidentally think you're done and clobber your work.

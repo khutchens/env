@@ -44,6 +44,7 @@ if status is-interactive
     # Completions
     if type -q jj
         COMPLETE=fish jj | source
+        abbr --add jj 'jj --no-pager'
     end
 end
 

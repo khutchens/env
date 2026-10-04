@@ -42,7 +42,7 @@ if(root,
         if(!mine, author.name()),
         working_copies,
       ),
-    ),
+    ) ++ "\n",
   )
 )
 '''
@@ -70,3 +70,7 @@ coalesce(
 
 [ui]
 default-command = "log"
+
+[user]
+name = "Kyle Hutchens"
+email = "kyle.hutchens@bedrockrobotics.com"
