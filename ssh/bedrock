@@ -5,10 +5,15 @@ Host devbox
     AddKeysToAgent        yes
     StrictHostKeyChecking no
 
-Host mob-*
-    HostName       bedrock-ipc-%h
+# Host mob-*
+Host ipc-mob-*
+    # HostName       bedrock-ipc-%h
+    HostName       bedrock-%h
     User           bedrock
     AddKeysToAgent yes
 
     # Forward Zenoh connection port, MOB -> login client
     # LocalForward 8455 localhost:8455
+
+Host mob-*
+    User           root
