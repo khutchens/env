@@ -16,4 +16,4 @@ Host ipc-mob-*
     # LocalForward 8455 localhost:8455
 
 Host mob-*
-    User           root
+    User           bedrock
