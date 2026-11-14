@@ -29,7 +29,7 @@ if status is-interactive
     abbr --add fs  "screen (find /dev/serial -type l | fzf) 115200"
     abbr --add fb  "bazel query ... | fzf -m"
     abbr --add ft  fzf_tmux_attach
-    abbr --add fw  fzf_dirt_workspace
+    abbr --add fw  fzf_dirt_workspace ~/dirt/dirt-repo
 
     if test (uname) = 'Linux'
         abbr --add ip 'ip --color=auto -brief'
